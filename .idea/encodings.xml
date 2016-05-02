@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
-    <file url="file://$PROJECT_DIR$/designpattern/src/main/java/com/sen/learn/disign/pattern/imitation/chapter28/VisitorMode.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/designpattern/src/main/java/com/sen/learn/disign/pattern/imitation/chapter28/VisitorModeClient.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/designpattern/src/main/java/com/sen/learn/disign/pattern/imitation/chapter28/VisitorModeSuccess.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/designpattern/src/main/java/com/sen/learn/disign/pattern/imitation/chapter22_BridgeMode/version1/HandSetGame.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/designpattern/src/main/java/com/sen/learn/disign/pattern/imitation/chapter28_VisitorMode/VisitorMode.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/designpattern/src/main/java/com/sen/learn/disign/pattern/imitation/chapter28_VisitorMode/VisitorModeClient.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/designpattern/src/main/java/com/sen/learn/disign/pattern/imitation/chapter28_VisitorMode/VisitorModePerson.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/designpattern/src/main/java/com/sen/learn/disign/pattern/imitation/chapter28_VisitorMode/VisitorModeSuccess.java" charset="GBK" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

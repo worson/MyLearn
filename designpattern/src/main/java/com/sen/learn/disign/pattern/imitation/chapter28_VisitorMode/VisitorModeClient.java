@@ -1,4 +1,4 @@
-package com.sen.learn.disign.pattern.imitation.chapter28;
+package com.sen.learn.disign.pattern.imitation.chapter28_VisitorMode;
 
 /**
  * Created by secon on 2016/5/2.
@@ -9,7 +9,7 @@ public class VisitorModeClient {
         VisitorModeManager manager = new VisitorModeManager();
         manager.attach(new VisitorModeMan());
         manager.attach(new VisitorModeWoman());
-
+        //当需要增加一个特性时，只需要增加一个VisitorModeAction
         manager.display(new VisitorModeSuccess());
     }
 }

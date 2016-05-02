@@ -1,4 +1,4 @@
-package com.sen.learn.disign.pattern.imitation.chapter28;
+package com.sen.learn.disign.pattern.imitation.chapter28_VisitorMode;
 
 /**
  * Created by secon on 2016/5/2.

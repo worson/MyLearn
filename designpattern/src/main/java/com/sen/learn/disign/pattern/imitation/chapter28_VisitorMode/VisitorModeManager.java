@@ -1,4 +1,4 @@
-package com.sen.learn.disign.pattern.imitation.chapter28;
+package com.sen.learn.disign.pattern.imitation.chapter28_VisitorMode;
 
 import java.util.ArrayList;
 import java.util.List;
