@@ -15,4 +15,8 @@ public class FlyweightMode {//享元模式
 		fly.operation("Third Call");
 	}
 
+	public static void main(String[] args) {
+		test();
+	}
+
 }

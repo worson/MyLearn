@@ -6,4 +6,8 @@ public class BuilderMode {
 		Director d = new Director(cai); // 指挥者
 		d.zuocai();// 我要指挥者弄菜，其实指挥者叫张三弄菜去了。
 	}
+
+	public static void main(String[] args) {
+		test();
+	}
 }

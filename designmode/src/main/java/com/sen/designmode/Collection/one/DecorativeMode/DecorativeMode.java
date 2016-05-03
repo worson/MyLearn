@@ -7,4 +7,8 @@ public class DecorativeMode {// 装饰模式
 		// 客户端不变, 但已增加了责任
 		decorator.operation();
 	}
+
+	public static void main(String[] args) {
+		test();
+	}
 }

@@ -12,4 +12,8 @@ public class CloneMode {
 		a2.dothing();
 		a3.dothing();
 	}
+
+	public static void main(String[] args) {
+		test();
+	}
 }

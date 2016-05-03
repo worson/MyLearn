@@ -22,4 +22,8 @@ public class VisitorMode {
 		mozi.ride(bh);
 	}
 
+	public static void main(String[] args) {
+		test();
+	}
+
 }

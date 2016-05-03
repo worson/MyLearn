@@ -89,4 +89,8 @@ public class AbstractFactoryModel {
 		productA2.method();
 		productB2.method();
 	}
+
+	public static void main(String[] args) {
+		test();
+	}
 }

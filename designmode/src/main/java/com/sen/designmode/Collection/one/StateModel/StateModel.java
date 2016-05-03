@@ -12,4 +12,8 @@ public class StateModel {// 状态模式
 		// 请求
 		context.request("test");
 	}
+
+	public static void main(String[] args) {
+		test();
+	}
 }

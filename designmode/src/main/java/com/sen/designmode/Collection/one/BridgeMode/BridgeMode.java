@@ -16,4 +16,8 @@ public class BridgeMode {// 桥梁模式
 		message.sendMessage("加班申请速批", "李总");
 	}
 
+	public static void main(String[] args) {
+		test();
+	}
+
 }
