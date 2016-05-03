@@ -5,11 +5,11 @@ package com.sen.learn.disign.pattern.imitation.chapter28_VisitorMode;
  */
 public class VisitorModeClient {
     public static void main(String[] args) {
-        System.out.println("***************访问者模式示例：男人和女人*************************");
+        System.out.println("***************璁块棶鑰呮ā寮忕ず渚嬶細鐢蜂汉鍜屽コ浜?*************************");
         VisitorModeManager manager = new VisitorModeManager();
         manager.attach(new VisitorModeMan());
         manager.attach(new VisitorModeWoman());
-        //当需要增加一个特性时，只需要增加一个VisitorModeAction
+        //褰撻渶瑕佸鍔犱竴涓壒鎬ф椂锛屽彧闇?瑕佸鍔犱竴涓猇isitorModeAction
         manager.display(new VisitorModeSuccess());
     }
 }

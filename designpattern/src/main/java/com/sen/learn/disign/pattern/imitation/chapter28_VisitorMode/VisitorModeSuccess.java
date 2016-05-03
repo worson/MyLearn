@@ -6,11 +6,11 @@ package com.sen.learn.disign.pattern.imitation.chapter28_VisitorMode;
 public class VisitorModeSuccess extends VisitorModeAction {
     @Override
     public void getManConclusion(com.sen.learn.disign.pattern.imitation.chapter28_VisitorMode.VisitorModeMan man) {
-        output.output(man.getSex()+"成功时"+"背后多半有一个伟大的女人");
+        output.output(man.getSex()+"鎴愬姛鏃?"+"鑳屽悗澶氬崐鏈変竴涓紵澶х殑濂充汉");
     }
 
     @Override
     public void getWomanConclusion(VisitorModeWoman woman) {
-        output.output(woman.getSex()+"成功时"+"背后多有一个不成功的男人");
+        output.output(woman.getSex()+"鎴愬姛鏃?"+"鑳屽悗澶氭湁涓?涓笉鎴愬姛鐨勭敺浜?");
     }
 }

@@ -2,7 +2,7 @@ package com.sen.learn.disign.pattern.imitation.chapter28_VisitorMode;
 
 /**
  * Created by secon on 2016/5/2.
- * 为每一个类声明一个vistor操作
+ * 涓烘瘡涓?涓被澹版槑涓?涓獀istor鎿嶄綔
  */
 public abstract class VisitorModePerson {
     public String sex;
@@ -14,6 +14,6 @@ public abstract class VisitorModePerson {
     public void setSex(String sex) {
         this.sex = sex;
     }
-//    * 为每一个类声明一个vistor操作
+//    * 涓烘瘡涓?涓被澹版槑涓?涓獀istor鎿嶄綔
     public abstract void accept(VisitorModeAction visitor);
 }

@@ -1,7 +1,7 @@
 package com.sen.learn.disign.pattern.imitation.chapter28_VisitorMode;
 
 /*
-* 表示一个作用于某个对象结构中的各元素的操作。它可以使你在不改变各元素的类的前提下定义作用于这些元素的新操作。
+* 琛ㄧず涓?涓綔鐢ㄤ簬鏌愪釜瀵硅薄缁撴瀯涓殑鍚勫厓绱犵殑鎿嶄綔銆傚畠鍙互浣夸綘鍦ㄤ笉鏀瑰彉鍚勫厓绱犵殑绫荤殑鍓嶆彁涓嬪畾涔変綔鐢ㄤ簬杩欎簺鍏冪礌鐨勬柊鎿嶄綔銆?
 *
 * */
 public class VisitorMode {

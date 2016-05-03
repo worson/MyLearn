@@ -1,1 +1,1 @@
-include ':app', ':designpattern', ':androidview'
+include ':app', ':androidview', ':designmode'
