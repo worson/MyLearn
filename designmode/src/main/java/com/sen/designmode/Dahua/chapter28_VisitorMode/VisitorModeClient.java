@@ -9,7 +9,6 @@ public class VisitorModeClient {
         VisitorModeManager manager = new VisitorModeManager();
         manager.attach(new VisitorModeMan());
         manager.attach(new VisitorModeWoman());
-        //当需要增加一个特性时，只�?要增加一个VisitorModeAction
         manager.display(new VisitorModeSuccess());
     }
 }
