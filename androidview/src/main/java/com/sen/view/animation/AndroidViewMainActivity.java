@@ -1,40 +1,45 @@
-package com.sen.learn;
+package com.sen.view.animation;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.sen.view.animation.AndroidViewMainActivity;
+import com.sen.view.R;
+import com.sen.view.TestWidgetActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
-
+public class AndroidViewMainActivity extends AppCompatActivity {
     private Context mContext;
     private List<Map<String,Object>> moduleListData;
-    private String[] mModuleTitles = new String[]{"设计模式","安卓交互"};
-    private int[] mModuleIconIDs = new int[]{R.mipmap.ic_launcher,R.mipmap.ic_launcher};
-    private Class[] mActivityArray = new Class[]{com.sen.designmode.Collection.one.view.DisignModeMainActivity.class,AndroidViewMainActivity.class};
+    private String[] mModuleTitles = new String[]{"动画 ","自定义View"};
+    private Class[] mActivityArray = new Class[]{TestMenuAnimation.class, TestWidgetActivity.class};
 
-//    private Activity[] moduleActivitys = new Activity[]{com.sen.designmode.Collection.one.view.DisignModeMainActivity.class};
+    private ViewGroup mMainView;
     private ListView moduleListView;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         mContext = this;
+        //setContentView(R.layout.activity_android_view_main);
+        moduleListView = new ListView(mContext);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        addContentView(moduleListView,params);
         initView();
-    }
 
+    }
     public void initView(){
         initModuleView();
     }
@@ -44,11 +49,9 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i <mActivityArray.length ; i++) {
             Map<String,Object> map1=new HashMap<String, Object>();
             map1.put("nametext", mModuleTitles[i]);
-            map1.put("iconid",  mModuleIconIDs[i]);
             moduleListData.add(map1);
         }
-        moduleListView = (ListView)findViewById(R.id.module_listview);
-        SimpleAdapter adapter = new SimpleAdapter(this,moduleListData,R.layout.main_module_item, new String[]{"nametext","iconid"},new int[]{R.id.module_item_title,R.id.module_item_icon});
+        SimpleAdapter adapter = new SimpleAdapter(this,moduleListData,R.layout.main_module_item, new String[]{"nametext"},new int[]{R.id.module_item_title});
         moduleListView.setAdapter(adapter);
         moduleListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
