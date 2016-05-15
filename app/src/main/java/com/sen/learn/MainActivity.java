@@ -9,7 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.sen.view.animation.AndroidViewMainActivity;
+import com.sen.view.AndroidViewMainActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;

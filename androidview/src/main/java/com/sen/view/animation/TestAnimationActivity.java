@@ -5,11 +5,11 @@ import android.os.Bundle;
 
 import com.sen.view.R;
 
-public class TestMenuAnimation extends AppCompatActivity {
+public class TestAnimationActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_menu_animation);
+        setContentView(R.layout.activity_test_animation);
     }
 }

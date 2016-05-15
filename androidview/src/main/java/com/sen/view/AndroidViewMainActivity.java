@@ -1,4 +1,4 @@
-package com.sen.view.animation;
+package com.sen.view;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,8 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.sen.view.R;
-import com.sen.view.TestWidgetActivity;
+import com.sen.view.animation.TestAnimationActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +21,7 @@ public class AndroidViewMainActivity extends AppCompatActivity {
     private Context mContext;
     private List<Map<String,Object>> moduleListData;
     private String[] mModuleTitles = new String[]{"动画 ","自定义View"};
-    private Class[] mActivityArray = new Class[]{TestMenuAnimation.class, TestWidgetActivity.class};
+    private Class[] mActivityArray = new Class[]{TestAnimationActivity.class, TestWidgetActivity.class};
 
     private ViewGroup mMainView;
     private ListView moduleListView;

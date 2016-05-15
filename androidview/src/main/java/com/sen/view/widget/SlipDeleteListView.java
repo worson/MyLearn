@@ -15,7 +15,7 @@ import com.sen.view.R;
 /**
  * Created by secon on 2016/5/15.
  */
-public class MyListView extends ListView implements View.OnTouchListener,
+public class SlipDeleteListView extends ListView implements View.OnTouchListener,
         GestureDetector.OnGestureListener {
 
     private GestureDetector gestureDetector;
@@ -30,7 +30,7 @@ public class MyListView extends ListView implements View.OnTouchListener,
 
     private boolean isDeleteShown;
 
-    public MyListView(Context context, AttributeSet attrs) {
+    public SlipDeleteListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         gestureDetector = new GestureDetector(getContext(), this);
         setOnTouchListener(this);

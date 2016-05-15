@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.sen.view.R;
 import com.sen.view.adapter.MyAdapter;
-import com.sen.view.widget.MyListView;
+import com.sen.view.widget.SlipDeleteListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.List;
 public class TestMyListViewFragment extends Fragment {
 
     private View mMainView;
-    private MyListView myListView;
+    private SlipDeleteListView slipDeleteListView;
 
     private MyAdapter adapter;
 
@@ -38,8 +38,8 @@ public class TestMyListViewFragment extends Fragment {
         // Inflate the layout for this fragment
         mMainView = inflater.inflate(R.layout.fragment_test_my_list_view, container, false);
         initList();
-        myListView = (MyListView) mMainView.findViewById(R.id.my_list_view);
-        myListView.setOnDeleteListener(new MyListView.OnDeleteListener() {
+        slipDeleteListView = (SlipDeleteListView) mMainView.findViewById(R.id.my_list_view);
+        slipDeleteListView.setOnDeleteListener(new SlipDeleteListView.OnDeleteListener() {
             @Override
             public void onDelete(int index) {
                 contentList.remove(index);
@@ -47,7 +47,7 @@ public class TestMyListViewFragment extends Fragment {
             }
         });
         adapter = new MyAdapter(getContext(), 0, contentList);
-        myListView.setAdapter(adapter);
+        slipDeleteListView.setAdapter(adapter);
 
         return mMainView;
     }
