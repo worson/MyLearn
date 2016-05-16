@@ -1,1 +1,1 @@
-include ':app', ':androidview', ':designmode'
+include ':app',':androidview', ':designmode', ':sharelibrary'

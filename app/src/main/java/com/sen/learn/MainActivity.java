@@ -2,14 +2,13 @@ package com.sen.learn;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-
-import com.sen.view.AndroidViewMainActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,11 +19,12 @@ public class MainActivity extends AppCompatActivity {
 
     private Context mContext;
     private List<Map<String,Object>> moduleListData;
-    private String[] mModuleTitles = new String[]{"设计模式","安卓交互"};
-    private int[] mModuleIconIDs = new int[]{R.mipmap.ic_launcher,R.mipmap.ic_launcher};
-    private Class[] mActivityArray = new Class[]{com.sen.designmode.Collection.one.view.DisignModeMainActivity.class,AndroidViewMainActivity.class};
+    private Resources mResource;
+    private String[] mModuleTitles;
+    private String[] mModuleEntrance;
+    private int[] mModuleIconIDs = new int[]{R.mipmap.ic_launcher,R.mipmap.ic_launcher,R.mipmap.ic_launcher};
+    private static final int  DEFAULT_ICON = R.mipmap.ic_launcher;
 
-//    private Activity[] moduleActivitys = new Activity[]{com.sen.designmode.Collection.one.view.DisignModeMainActivity.class};
     private ListView moduleListView;
 
     @Override
@@ -32,7 +32,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
+//        initToolbar();
+        initDefault();
         initView();
+    }
+
+    private void initDefault(){
+        mResource = mContext.getResources();
+        mModuleTitles = mResource.getStringArray(R.array.main_activity_list_item_description);
+        mModuleEntrance = mResource.getStringArray(R.array.main_activity_list_item_entrance);
     }
 
     public void initView(){
@@ -41,10 +49,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void initModuleView(){
         moduleListData=new ArrayList<Map<String,Object>>();
-        for (int i = 0; i <mActivityArray.length ; i++) {
+        for (int i = 0; i <mModuleEntrance.length ; i++) {
             Map<String,Object> map1=new HashMap<String, Object>();
             map1.put("nametext", mModuleTitles[i]);
-            map1.put("iconid",  mModuleIconIDs[i]);
+            if(mModuleTitles==null || mModuleTitles.length<i){
+                map1.put("iconid",  DEFAULT_ICON);
+            }else{
+                map1.put("iconid",  mModuleIconIDs[i]);
+            }
             moduleListData.add(map1);
         }
         moduleListView = (ListView)findViewById(R.id.module_listview);
@@ -53,8 +65,19 @@ public class MainActivity extends AppCompatActivity {
         moduleListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(mContext, mActivityArray[position]);
-                startActivity(intent);
+
+//                Intent intent = new Intent(mContext, mActivityArray[position]);
+//                startActivity(intent);
+                try{
+                    if (mModuleEntrance != null && mModuleEntrance[position] != null) {
+                        Intent intent = new Intent(mContext, Class.forName(mModuleEntrance[position]));
+                        startActivity(intent);
+                    }
+                }catch (Exception e){
+
+                }
+
+
             }
         });
     }
