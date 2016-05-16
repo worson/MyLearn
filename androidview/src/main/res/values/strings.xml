@@ -3,4 +3,41 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <array name="prompt_navi_demo_array" >
+        <item>导航到深圳湾</item>
+        <item>加油站</item>
+    </array>
+    <array name="prompt_music_demo_array" >
+        <item>播放音乐</item>
+        <item>下一首</item>
+    </array>
+    <array name="prompt_call_demo_array" >
+        <item>打电话给光晕</item>
+        <item>光晕网络</item>
+    </array>
+    <array name="prompt_recoder_demo_array" >
+        <item>打开行车记录仪</item>
+        <item>精彩视频</item>
+    </array>
+
+    <array name="speech_3rd_navi_menu" >
+        <item>深圳湾体育中心</item>
+        <item>回家</item>
+        <item>导航到深圳湾</item>
+        <item>回家</item>
+    </array>
+
+    <array name="speech_3rd_call_menu" >
+        <item>打电话给光晕科技</item>
+    </array>
+
+    <array name="speech_3rd_music_menu" >
+        <item>播放陈奕讯的歌</item>
+        <item>义勇军进行曲</item>
+        <item>我想听激昂的歌曲</item>
+        <item>下一首</item>
+        <item>暂停</item>
+    </array>
+
 </resources>
