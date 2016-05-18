@@ -1,1 +1,3 @@
 include ':app',':androidview', ':designmode', ':sharelibrary'
+include ':endpointsSharedLib'
+project(':endpointsSharedLib').projectDir = new File('/Users/wangshengxing/SourceTree/halo/hudlauncher/endpointsSharedLib')

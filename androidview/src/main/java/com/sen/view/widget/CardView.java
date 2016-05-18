@@ -88,6 +88,7 @@ public class CardView extends RelativeLayout {
             return;//直接返回
         }
         if(mResourceInflateView !=null){
+            HaloLogger.logI(TAG,"update,clear inflate resoure view");
             mResourceInflateView.setVisibility(INVISIBLE);
             removeView(mResourceInflateView);
         }
@@ -135,10 +136,13 @@ public class CardView extends RelativeLayout {
         mMainview.setVisibility(GONE);
         //清除上一次残留
         if (mResourceInflateView != null) {
+            HaloLogger.logI(TAG,"setLayout,clear inflate");
+            mResourceInflateView.setVisibility(GONE);
             removeView(mResourceInflateView);
         }
         mResourceInflateView = inflate(mContext,resource,this);
         if (mResourceInflateView == null) {
+            HaloLogger.logI(TAG,"setLayout,inflate is null");
             return;
         }
         HaloLogger.logI(TAG,"setLayout 文件显示");

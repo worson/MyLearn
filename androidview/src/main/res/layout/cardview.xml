@@ -44,7 +44,7 @@
         android:layout_alignBottom="@+id/title_textvew3"
         android:layout_alignParentLeft="true"
         android:layout_alignTop="@id/title_textvew1"
-        android:background="@color/darkyellow" />
+        android:background="#FFCC33"/>
 
 
 </RelativeLayout>

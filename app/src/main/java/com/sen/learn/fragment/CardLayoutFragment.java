@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.sen.view.R;
+import com.sen.learn.R;
 import com.sen.view.widget.CardLayout;
 import com.sen.view.widget.CardView;
 
@@ -98,12 +98,10 @@ public class CardLayoutFragment extends Fragment  implements View.OnClickListene
         }
 
 //        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(DisplayUtil.dip2px(this,465),DisplayUtil.dip2px(this,113));
-
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DisplayUtil.dip2px(getContext(),113));
         mCardLayout = new CardLayout(getContext());
-
-        mMainView.addView(mCardLayout,params);
-
+        mCardLayout.setLayoutParams(params);
+        mMainView.addView(mCardLayout);
         mContentList = new ArrayList<Map<String,Object>>();
 
         return mMainView;
