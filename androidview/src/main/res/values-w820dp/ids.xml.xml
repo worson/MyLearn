@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <id>cardview_textview_1</id>
+    <id>cardview_textview_2</id>
+    <id>cardview_textview_3</id>
+    <id>cardview_textview_4</id>
+    <id>cardview_textview_5</id>
+    <id>cardview_textview_6</id>
+    <id>cardview_textview_7</id>
 </resources>

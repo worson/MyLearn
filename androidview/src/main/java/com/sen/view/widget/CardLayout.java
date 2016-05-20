@@ -1,9 +1,14 @@
 package com.sen.view.widget;
 
+import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.LayoutAnimationController;
+import android.view.animation.ScaleAnimation;
 import android.widget.LinearLayout;
 
 
@@ -24,14 +29,14 @@ public class CardLayout extends LinearLayout
 	private Context mContext;
 	private final int DEFAULT_VIEW_NUMBER = 4;
 	private LayoutParams mDefalutLayoutParams;
-
-	private static final int[] TextViewIDS = new int[]{R.id.title_textvew1, R.id.title_textvew2, R.id.title_textvew3};
+	private static final boolean UPDATE_FORCE_REMOVE = true;
 
 	private List<View> mRemovedViewList;
 
 	public CardLayout(Context context) {
 		super(context);
 		init(context);
+//		setLayoutTransition();
 	}
 
 	public CardLayout(Context context, AttributeSet attrs)
@@ -39,6 +44,23 @@ public class CardLayout extends LinearLayout
 		super(context, attrs);
 	}
 
+	private void setLayoutTransition(){
+//        LayoutTransition transitioner = new LayoutTransition();
+//        ObjectAnimator animOut = ObjectAnimator.ofFloat(null, "rotation", 0f, 90f, 0f);
+//        transitioner.setAnimator(LayoutTransition.DISAPPEARING, animOut);
+//        viewGroup.setLayoutTransition(transitioner);
+
+		LayoutTransition mTransitioner = new LayoutTransition();
+		//入场动画:view在这个容器中消失时触发的动画
+		ObjectAnimator animIn = ObjectAnimator.ofFloat(null, "rotationY", 0f, 360f,0f);
+		mTransitioner.setAnimator(LayoutTransition.APPEARING, animIn);
+
+		//出场动画:view显示时的动画
+		ObjectAnimator animOut = ObjectAnimator.ofFloat(null, "rotation", 0f, 90f, 0f);
+		mTransitioner.setAnimator(LayoutTransition.DISAPPEARING, animOut);
+
+		setLayoutTransition(mTransitioner);
+	}
 
 	private void addDisplayView(int index){
 		View view = mRemovedViewList.remove(0);
@@ -82,10 +104,11 @@ public class CardLayout extends LinearLayout
 		* layout中没有添加view时，直接添加view
 		* 有相关的view时，更新view中的内容
 		* */
-
-		int diffNuber = contents.size()-getChildCount();
-		if(diffNuber>0){//需要增加view
-			for (int i = 0; i < Math.abs(diffNuber); i++) {
+		if (UPDATE_FORCE_REMOVE){
+			for (int i = 0; i <getChildCount() ; i++) {
+				removeDisplayView(0);
+			}
+			for (int i = 0; i <contents.size() ; i++) {
 				if (mRemovedViewList.size()<=0){
 					HaloLogger.logI(TAG,"new a CardView");
 					mRemovedViewList.add(new CardView(mContext));
@@ -93,11 +116,24 @@ public class CardLayout extends LinearLayout
 				HaloLogger.logI(TAG,"add a CardView");
 				addDisplayView(i);
 			}
+		}else {
+			int diffNuber = contents.size()-getChildCount();
+			if(diffNuber>0){//需要增加view
+				for (int i = 0; i < Math.abs(diffNuber); i++) {
+					if (mRemovedViewList.size()<=0){
+						HaloLogger.logI(TAG,"new a CardView");
+						mRemovedViewList.add(new CardView(mContext));
+					}
+					HaloLogger.logI(TAG,"add a CardView");
+					addDisplayView(i);
+				}
 
-		}else if(diffNuber<0){//需要移除view
-			for (int i = 0; i <Math.abs(diffNuber) ; i++) {
-				HaloLogger.logI(TAG,"remove a CardView");
-				removeDisplayView(0);
+			}else if(diffNuber<0){//需要移除view
+				for (int i = 0; i <Math.abs(diffNuber) ; i++) {
+					HaloLogger.logI(TAG,"remove a CardView");
+					removeDisplayView(0);
+
+				}
 			}
 		}
 		//更新view中的内容

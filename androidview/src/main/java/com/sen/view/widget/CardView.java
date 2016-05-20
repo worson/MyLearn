@@ -45,10 +45,9 @@ public class CardView extends RelativeLayout {
     private View mResourceInflateView;
 
     private boolean mMainviewRemoved = false;
-
     private List<TextView> mTextViewList;
-    private static final int[] TextViewIDS = new int[]{R.id.title_textvew1, R.id.title_textvew2, R.id.title_textvew3};
-    private static final int[] InflateTextViewIDS = new int[]{R.id.title_textvew1, R.id.title_textvew2, R.id.title_textvew3};
+    private static final int[] TextViewIDS = new int[]{R.id.cardview_textview_1, R.id.cardview_textview_2, R.id.cardview_textview_3};
+    private static final int[] InflateTextViewIDS = new int[]{R.id.cardview_textview_1, R.id.cardview_textview_2, R.id.cardview_textview_3};
 
     private void initResource() {
         mTextViewList = new ArrayList<>();

@@ -58,6 +58,8 @@ public class CanvasLineFragment extends Fragment {
         return mMainView;
     }
 
+    Bitmap mStrategyRouteBitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
+
     private void updatePath(){
         mPathPoints.clear();
         mPathPoints.add(new Point(0,0));
@@ -70,18 +72,29 @@ public class CanvasLineFragment extends Fragment {
         mPathPoints.add(new Point(200,200));
 
 
-        int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        mStrategyRouteView.measure(w, h);
-        int height = mStrategyRouteView.getMeasuredHeight();
-        int width = mStrategyRouteView.getMeasuredWidth();
+
+        int height = 500;
+        int width = 500;
 
         List<Point> newPointList = scalePonitPath(500,500,mPathPoints);
-        Bitmap srcBitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
-        Bitmap bitmap = updatePathBitmap(width,height,newPointList,srcBitmap);
-        mStrategyRouteView.setImageBitmap(bitmap);
+        if (newPointList != null) {
+            Bitmap bitmap = updatePathBitmap(width,height,newPointList, mStrategyRouteBitmap);
+            drawPathText(bitmap);
+            mStrategyRouteView.setImageBitmap(bitmap);
+        }
 
 
+    }
+    private  Bitmap drawPathText(Bitmap bitmap){
+
+        Canvas canvas = new Canvas(bitmap);
+        Paint textPaint = new TextPaint();
+        textPaint.setStrokeWidth(10);
+        textPaint.setTextSize(20);
+        textPaint.setColor(Color.WHITE);
+        canvas.drawText("师哥",0,500,textPaint);
+        HaloLogger.logI(TAG,"bitmap的宽高"+bitmap.getWidth()+" "+bitmap.getHeight());
+        return bitmap;
     }
 
     private List<Point> mPathPoints = new ArrayList<Point>();
@@ -157,46 +170,72 @@ public class CanvasLineFragment extends Fragment {
             Point newPoint = new Point(newX,newY);
             newPointList.add(newPoint);
         }
-        HaloLogger.logI(TAG,"源数据点为："+points.get(0)+points.get(points.size()-1));
+        HaloLogger.logI(TAG,"源数据点为："+points);
         HaloLogger.logI(TAG,"源数据左右上下的宽度分别为："+maxLeft+", "+maxRight+", "+maxTop+", "+maxBottom);
         HaloLogger.logI(TAG,"源数据左上参考点为："+refPoint.x+", "+refPoint.y);
-        HaloLogger.logI(TAG,"转换后参考点："+refPoint.x+", "+refPoint.y);
+        HaloLogger.logI(TAG,"转换后点："+newPointList);
 
 
         return newPointList;
     }
 
-    private Bitmap updatePathBitmap(int width, int height,List<Point> points,Bitmap bitmap){
+    private Bitmap updatePathBitmap(int loads, int height,List<Point> points,Bitmap bitmap){
+
+        mPathPaint.setColor(Color.BLUE);
+        mPathPaint.setStrokeWidth(10);
+        mPathPaint.setStyle(Paint.Style.STROKE);
+
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
         canvas.drawColor(Color.BLACK);
-        Path path = new Path();
+
         Point startPoint = points.get(0);
         Point endPoint = points.get(points.size()-1);
-        path.moveTo(startPoint.x,startPoint.y);
-        int step = 1;//points.size()/20
-        for (int i = 1; i <points.size() ; i=i+step) {
-            Point toPoint = points.get(i);
-            path.lineTo(toPoint.x,toPoint.y);
-
-        }
-
 
         Paint textPaint = new TextPaint();
         textPaint.setStrokeWidth(10);
         textPaint.setTextSize(20);
         textPaint.setColor(Color.WHITE);
-        canvas.drawText("无名路",20,20,textPaint);
+//        canvas.drawText("无名路",20,20,textPaint);
 
+        int colorCnt = 0;
+        final String[] LOADS = new String[]{"深南大道","南海大道","学府路","滨海大道"};
 
-        canvas.drawTextOnPath("深南大道",path,20,50,textPaint);
-        canvas.drawPath(path,updatePaint());
+        int step = points.size()/5;//points.size()/20
+        int index = 0;
+        for (int j = 0; j <points.size()/step ; j=j+1) {
+            Path path = new Path();
+            Point moveTo = points.get(index);
+            path.moveTo(moveTo.x,moveTo.y);
+            for (int i = 0; i <step ; i=i+1) {
+
+                if(++index >=points.size()){
+                    break;
+                }
+                Point toPoint = points.get(index);
+                path.lineTo(toPoint.x,toPoint.y);
+            }
+            if(Math.random()>0.7){
+                canvas.drawTextOnPath(LOADS[(int)((LOADS.length-1)*Math.random())],path,0,20,textPaint);
+                if(++colorCnt>2){
+                    colorCnt=0;
+                    mPathPaint.setColor(Color.RED);
+
+                }
+            }
+            canvas.drawPath(path,mPathPaint);
+            mPathPaint.setColor(Color.BLUE);
+        }
+
+        canvas.drawText("起点",startPoint.x,startPoint.x,textPaint);
+        canvas.drawText("终点",endPoint.x,endPoint.x,textPaint);
 
         paint.setColor(Color.BLUE);
         paint.setStrokeWidth(3);
         paint.setStyle(Paint.Style.FILL);
         canvas.drawCircle(startPoint.x,startPoint.y,6,paint);
         canvas.drawCircle(endPoint.x,endPoint.y,6,paint);
+
 
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawCircle(startPoint.x,startPoint.y,10,paint);

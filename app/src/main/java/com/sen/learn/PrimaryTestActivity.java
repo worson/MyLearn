@@ -6,8 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.sen.learn.fragment.CardLayoutFragment;
 import com.sen.view.fragment.CanvasFragment;
 import com.sen.view.fragment.CanvasLineFragment;
+import com.sen.view.fragment.LayoutAnimationFragment;
 
 
 public class PrimaryTestActivity extends AppCompatActivity {
@@ -26,7 +28,7 @@ public class PrimaryTestActivity extends AppCompatActivity {
         Fragment fragment = manager.findFragmentById(R.id.fragment_container);
 
         if (fragment == null) {
-            fragment = new CanvasLineFragment();
+            fragment = new CardLayoutFragment();
             manager.beginTransaction()
                     .add(R.id.fragment_container, fragment)
                     .commit();
