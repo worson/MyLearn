@@ -103,6 +103,11 @@ public class CanvasLineFragment extends Fragment {
 
         RectMapPara mRectMapPara = measureRect(500,500,mPathPoints);
         List<Point> newPointList = rectRemap(mPathPoints,mRectMapPara);
+
+        List<Path> undrawPaths= new ArrayList<>();
+        Path path1 = new Path();
+        path1.addRect(0,0,width,height, Path.Direction.CCW);
+        path1.addRect(width-200,height-70,width,height, Path.Direction.CCW);
         if (newPointList != null) {
             Bitmap srcBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);;
             Bitmap bitmap = drawPath(newPointList,srcBitmap);
@@ -226,7 +231,7 @@ public class CanvasLineFragment extends Fragment {
 
         return  rectMapPara;
     }
-    
+
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private  Bitmap drawPathText(List<Point> points, List<String> loads, int counter, Bitmap bitmap){
         final int TEXT_MARGIN_WIDTH = 15;
@@ -242,6 +247,17 @@ public class CanvasLineFragment extends Fragment {
         Paint.FontMetrics fm = textPaint.getFontMetrics();
         int textHeight = (int) (Math.ceil(fm.descent - fm.ascent));
         Path intersectPath = new Path();
+
+        //计算不能标注的位置
+        int height = bitmap.getHeight();
+        int width = bitmap.getWidth();
+        Path path1 = new Path();
+        path1.addRect(0,0,width,height, Path.Direction.CCW);
+        Path windowPath = new Path();
+        windowPath.addRect(0,0,width+10,height+10, Path.Direction.CCW);
+        windowPath.op(path1, Path.Op.DIFFERENCE);
+        windowPath.addRect(width-200,height-70,width,height, Path.Direction.CCW);
+        drawPathList.add(windowPath);
 
         //最长的路优先显示，优先取路的中间坐标点，多条路名左右交叉
         final int Cnt = Math.min(counter,points.size());
@@ -323,6 +339,7 @@ public class CanvasLineFragment extends Fragment {
                         line.lineTo(point.x+tw,point.y);
                         canvas.drawPath(line,paint);
 
+
                         break;
                     }
                 }
@@ -373,12 +390,13 @@ public class CanvasLineFragment extends Fragment {
     }
 
     private Bitmap drawPath(List<Point> points,Bitmap bitmap){
-
-        mPathPaint.setColor(Color.BLUE);
-        mPathPaint.setStrokeWidth(10);
-        mPathPaint.setStyle(Paint.Style.STROKE);
-
         Canvas canvas = new Canvas(bitmap);
+
+        Paint pathPaint  = new Paint();
+        pathPaint.setColor(Color.BLUE);
+        pathPaint.setStrokeWidth(5);
+        pathPaint.setStyle(Paint.Style.STROKE);
+
         Paint paint = new Paint();
         canvas.drawColor(Color.BLACK);
 
@@ -389,7 +407,6 @@ public class CanvasLineFragment extends Fragment {
         textPaint.setTextSize(20);
         textPaint.setColor(Color.WHITE);
 
-        int colorCnt = 0;
         String[] LOADS = new String[]{"深南大道","南海大道","学府路","滨海大道","无名路","107车道"};
         int[] COLORS  = new int[]{Color.BLUE,Color.RED,Color.BLUE,Color.BLUE,Color.RED,Color.BLUE};
 
@@ -407,8 +424,7 @@ public class CanvasLineFragment extends Fragment {
                 Point toPoint = points.get(index);
                 path.lineTo(toPoint.x,toPoint.y);
             }
-            canvas.drawPath(path,mPathPaint);
-            mPathPaint.setColor(Color.BLUE);
+            canvas.drawPath(path,pathPaint);
         }
 
 //        paint.setColor(Color.GREEN);
