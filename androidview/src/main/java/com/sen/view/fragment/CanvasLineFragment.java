@@ -9,6 +9,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,8 +22,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.sen.view.R;
+import com.sen.view.mappath.PathRectManager;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -35,7 +37,7 @@ import hud.haliai.com.share.utils.HaloLogger;
 public class CanvasLineFragment extends Fragment {
 
     private static final String TAG = CanvasLineFragment.class.getName();
-
+    private static final boolean PATH_DEBUG_MODE = true;
     private Button mRedrawButton;
     private ViewGroup mMainView;
     private ImageView mStrategyRouteView;
@@ -82,10 +84,24 @@ public class CanvasLineFragment extends Fragment {
                 mPathPoints.add(new Point(50,200));
 
                 textPoints.add(new Point(50,30));
-                textPoints.add(new Point(0,150));
-                textPoints.add(new Point(30,150));
+                textPoints.add(new Point(30,105));
+                textPoints.add(new Point(30,100));
                 break;
             case 1:
+                mPathPoints.add(new Point(0,0));
+                mPathPoints.add(new Point(50,0));
+                mPathPoints.add(new Point(50,50));
+                mPathPoints.add(new Point(0,50));
+                mPathPoints.add(new Point(0,100));
+                mPathPoints.add(new Point(0,150));
+                mPathPoints.add(new Point(50,150));
+                mPathPoints.add(new Point(100,200));
+
+                textPoints.add(new Point(20,100));
+                textPoints.add(new Point(25,100));
+                textPoints.add(new Point(35,100));
+                textPoints.add(new Point(40,100));
+                textPoints.add(new Point(40,50));
                 break;
             case 2:
                 break;
@@ -111,7 +127,8 @@ public class CanvasLineFragment extends Fragment {
         if (newPointList != null) {
             Bitmap srcBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);;
             Bitmap bitmap = drawPath(newPointList,srcBitmap);
-            drawPathText(rectRemap(textPoints,mRectMapPara),loadNames,3,bitmap);
+//            drawPathText(rectRemap(textPoints,mRectMapPara),loadNames,3,bitmap);
+            drawPathText(rectRemap(textPoints,mRectMapPara),loadNames,bitmap);
             mStrategyRouteView.setImageBitmap(bitmap);
         }
 
@@ -143,6 +160,8 @@ public class CanvasLineFragment extends Fragment {
         public int widthMove;
         public int heightMove;
     }
+
+    PathRectManager mPathRectManager = new PathRectManager();
 
     private List<Point> rectRemap(List<Point> points,RectMapPara rectMapPara){
         Point refPoint = rectMapPara.refPoint;
@@ -232,8 +251,78 @@ public class CanvasLineFragment extends Fragment {
         return  rectMapPara;
     }
 
+    private void drawPathText(List<Point> points, List<String> loads, Bitmap bitmap){
+        Canvas canvas = new Canvas(bitmap);
+        Paint textPaint = new TextPaint();
+        List<Path> drawPathList = new LinkedList<>();
+        textPaint.setStrokeWidth(10);
+        textPaint.setTextSize(24);
+        textPaint.setColor(Color.WHITE);
+        Point centerPoint = new Point(bitmap.getWidth()/2,bitmap.getHeight()/2);
+        Paint.FontMetrics fm = textPaint.getFontMetrics();
+        int textHeight = (int) (Math.ceil(fm.descent - fm.ascent));
+        Path intersectPath = new Path();
+
+        Paint markPaint = new Paint();
+        markPaint.setColor(Color.RED);
+        markPaint.setStrokeWidth(3);
+        markPaint.setStyle(Paint.Style.FILL);
+
+
+        mPathRectManager.drawUndrawRegion(canvas,textPaint);
+        List<PathRectManager.RectRequest> rectRequests = new ArrayList<>();
+
+        mPathRectManager.drawUndrawRegion(canvas,textPaint);
+        //最长的路优先显示，优先取路的中间坐标点，多条路名左右交叉
+        final int Cnt = Math.min(loads.size(),points.size());
+        for (int i = 0; i < Cnt; i++) {
+            String content = loads.get(i);
+            if (content != null) {
+                if(content.length()>6){
+                    content = content.substring(0,5)+"...";
+                }
+                Point point = points.get(i);
+                PathRectManager.RectRequest rectRequest= new PathRectManager.RectRequest();
+                rectRequest.setType(PathRectManager.RectType.TextRect);
+                rectRequest.setPoint(point);
+                rectRequest.setMinRect(PathRectManager.getTextRect(content,textPaint));
+                rectRequests.add(rectRequest);
+
+                canvas.drawCircle(point.x,point.y,2,markPaint);
+            }
+
+        }
+        List<PathRectManager.RectResponse> textRectResponses = mPathRectManager.findRect(rectRequests);
+        Path textPath = new Path();
+        for (int i = 0; i < textRectResponses.size(); i++){
+            PathRectManager.RectResponse rectResponse = textRectResponses.get(i);
+            Rect textRect = rectResponse.getRect();
+            String content = loads.get(rectResponse.getIndex());
+            if(content.length()>6){
+                content = content.substring(0,5)+"...";
+            }
+            if (textRect != null) {
+                textPath.reset();
+                textPath.moveTo(textRect.left,textRect.bottom);
+                textPath.lineTo(textRect.right,textRect.bottom);
+                canvas.drawTextOnPath(content,textPath,0,0,textPaint);
+                if (PATH_DEBUG_MODE){
+                    Paint paint = new Paint();
+                    paint.setStrokeWidth(1);
+                    paint.setColor(Color.RED);
+                    paint.setStyle(Paint.Style.STROKE);
+                    textPath.reset();
+                    textPath.addRect(new RectF(textRect), Path.Direction.CCW);
+                    canvas.drawPath(textPath,paint);
+                }
+            }
+
+//            PathRectManager.drawRectText(content,textRect,textPaint);
+        }
+    }
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private  Bitmap drawPathText(List<Point> points, List<String> loads, int counter, Bitmap bitmap){
+        final boolean DEBUG_DRAW = false;
         final int TEXT_MARGIN_WIDTH = 15;
         final int TEXT_MARGIN_HEIGHT = 15;
         int moveH =0,moveV=0,baseX=0,baseY=0;
@@ -248,13 +337,19 @@ public class CanvasLineFragment extends Fragment {
         int textHeight = (int) (Math.ceil(fm.descent - fm.ascent));
         Path intersectPath = new Path();
 
+        Paint markPaint = new Paint();
+        markPaint.setColor(Color.RED);
+        markPaint.setStrokeWidth(3);
+        markPaint.setStyle(Paint.Style.FILL);
+
+
         //计算不能标注的位置
         int height = bitmap.getHeight();
         int width = bitmap.getWidth();
         Path path1 = new Path();
         path1.addRect(0,0,width,height, Path.Direction.CCW);
         Path windowPath = new Path();
-        windowPath.addRect(0,0,width+10,height+10, Path.Direction.CCW);
+        windowPath.addRect(-10,-10,width+10,height+10, Path.Direction.CCW);
         windowPath.op(path1, Path.Op.DIFFERENCE);
         windowPath.addRect(width-200,height-70,width,height, Path.Direction.CCW);
         drawPathList.add(windowPath);
@@ -263,6 +358,7 @@ public class CanvasLineFragment extends Fragment {
         final int Cnt = Math.min(counter,points.size());
         for (int i = 0; i < Cnt; i++) {
             Point point = points.get(i);
+            canvas.drawCircle(point.x,point.y,2,markPaint);
             String content = loads.get(i);
             if (content != null) {
                 if(content.length()>6){
@@ -327,19 +423,20 @@ public class CanvasLineFragment extends Fragment {
                         drawPathList.add(currentPath);
 
 //                        canvas.drawTextOnPath(content,currentPath,0,0,textPaint);
+                        canvas.drawCircle(point.x,point.y,2,markPaint);
+                        if (DEBUG_DRAW){
 
-                        Paint paint = new Paint();
-                        paint.setStrokeWidth(2);
-                        paint.setStyle(Paint.Style.STROKE);
-                        paint.setColor(Color.RED);
-                        canvas.drawPath(currentPath,paint);
+                            Paint paint = new Paint();
+                            paint.setStrokeWidth(2);
+                            paint.setStyle(Paint.Style.STROKE);
+                            paint.setColor(Color.RED);
+                            canvas.drawPath(currentPath,paint);
 
-                        Path line = new Path();
-                        line.moveTo(point.x,point.y);
-                        line.lineTo(point.x+tw,point.y);
-                        canvas.drawPath(line,paint);
-
-
+                            Path line = new Path();
+                            line.moveTo(point.x,point.y);
+                            line.lineTo(point.x+tw,point.y);
+                            canvas.drawPath(line,paint);
+                        }
                         break;
                     }
                 }
@@ -437,10 +534,17 @@ public class CanvasLineFragment extends Fragment {
 //        canvas.drawCircle(startPoint.x,startPoint.y,10,paint);
 //        canvas.drawCircle(endPoint.x,endPoint.y,10,paint);
 
+        Point startMarkPoint = new Point(startPoint.x-10,startPoint.y-10);
+        Point endMarkPoint = new Point(endPoint.x-12,endPoint.y-40);
         Bitmap startMark = BitmapFactory.decodeResource(getResources(), R.drawable.route_strategy_map_start);
-        canvas.drawBitmap(startMark,startPoint.x-10,startPoint.y-10,paint);
+        canvas.drawBitmap(startMark,startMarkPoint.x,startMarkPoint.y,paint);
         Bitmap endMark = BitmapFactory.decodeResource(getResources(), R.drawable.route_strategy_map_end);
-        canvas.drawBitmap(endMark,endPoint.x-12,endPoint.y-40,paint);
+        canvas.drawBitmap(endMark,endMarkPoint.x,endMarkPoint.y,paint);
+
+        mPathRectManager.clearUndrawRegion();
+        mPathRectManager.addUndrawRegion(bitmap.getWidth(),bitmap.getHeight());
+        mPathRectManager.addUndrawRegion(startMarkPoint,startMark.getWidth(),startMark.getHeight());
+        mPathRectManager.addUndrawRegion(endMarkPoint,endMark.getWidth(),endMark.getHeight());
 
         return bitmap;
 

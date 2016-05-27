@@ -1,4 +1,4 @@
-package com.sen.view.path;
+package com.sen.view.mappath;
 
 import android.graphics.Point;
 
@@ -72,3 +72,4 @@ public class HudPathStep {
     }
 
 }
+
