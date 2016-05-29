@@ -12,8 +12,8 @@
             <option value="$PROJECT_DIR$/androidview" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/designmode" />
+            <option value="$PROJECT_DIR$/internetlib" />
             <option value="$PROJECT_DIR$/sharelibrary" />
-            <option value="$PROJECT_DIR$/../../halo/hudlauncher/endpointsSharedLib" />
           </set>
         </option>
         <option name="myModules">
@@ -22,8 +22,8 @@
             <option value="$PROJECT_DIR$/androidview" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/designmode" />
+            <option value="$PROJECT_DIR$/internetlib" />
             <option value="$PROJECT_DIR$/sharelibrary" />
-            <option value="$PROJECT_DIR$/../../halo/hudlauncher/endpointsSharedLib" />
           </set>
         </option>
       </GradleProjectSettings>
