@@ -2,6 +2,7 @@ package com.sen.learn;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -18,9 +19,12 @@ public class MainActivity extends AppCompatActivity {
 
     private Context mContext;
     private List<Map<String,Object>> moduleListData;
+    private Resources mResource;
+    private String[] mModuleTitles;
+    private String[] mModuleEntrance;
+    private int[] mModuleIconIDs = new int[]{R.mipmap.ic_launcher,R.mipmap.ic_launcher,R.mipmap.ic_launcher};
+    private static final int  DEFAULT_ICON = R.mipmap.ic_launcher;
 
-
-//    private Activity[] moduleActivitys = new Activity[]{com.sen.designmode.Collection.one.view.DisignModeMainActivity.class};
     private ListView moduleListView;
 
     @Override
@@ -28,7 +32,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
+//        initToolbar();
+        initDefault();
         initView();
+    }
+
+    private void initDefault(){
+        mResource = mContext.getResources();
+        mModuleTitles = mResource.getStringArray(R.array.main_activity_list_item_description);
+        mModuleEntrance = mResource.getStringArray(R.array.main_activity_list_item_entrance);
     }
 
     public void initView(){
@@ -37,42 +49,35 @@ public class MainActivity extends AppCompatActivity {
 
     public void initModuleView(){
         moduleListData=new ArrayList<Map<String,Object>>();
-        Map<String,Object> map1=new HashMap<String, Object>();
-        map1.put("nametext", "设计模式");
-        map1.put("iconid", R.mipmap.ic_launcher);
-
-        Map<String,Object> map2=new HashMap<String, Object>();
-        map2.put("nametext", "第二个功能");
-        map2.put("iconid", R.mipmap.ic_launcher);
-
-
-        Map<String,Object> map3=new HashMap<String, Object>();
-        map3.put("nametext", "第三个功能");
-        map3.put("iconid", R.mipmap.ic_launcher);
-
-        Map<String,Object> map4=new HashMap<String, Object>();
-        map4.put("nametext", "第四个功能");
-        map4.put("iconid", R.mipmap.ic_launcher);
-
-        Map<String,Object> map5=new HashMap<String, Object>();
-        map5.put("nametext", "第五个功能");
-        map5.put("iconid", R.mipmap.ic_launcher);
-
-        moduleListData.add(map1);
-        moduleListData.add(map2);
-        moduleListData.add(map3);
-        moduleListData.add(map4);
-        moduleListData.add(map5);
-
+        for (int i = 0; i <mModuleEntrance.length ; i++) {
+            Map<String,Object> map1=new HashMap<String, Object>();
+            map1.put("nametext", mModuleTitles[i]);
+            if(mModuleTitles==null || mModuleTitles.length<i){
+                map1.put("iconid",  DEFAULT_ICON);
+            }else{
+                map1.put("iconid",  mModuleIconIDs[i]);
+            }
+            moduleListData.add(map1);
+        }
         moduleListView = (ListView)findViewById(R.id.module_listview);
         SimpleAdapter adapter = new SimpleAdapter(this,moduleListData,R.layout.main_module_item, new String[]{"nametext","iconid"},new int[]{R.id.module_item_title,R.id.module_item_icon});
         moduleListView.setAdapter(adapter);
         moduleListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(mContext, com.sen.designmode.Collection.one.view.DisignModeMainActivity.class);
-//                Intent intent = new Intent(mContext, DahuaMainActivity.class);
-                startActivity(intent);
+
+//                Intent intent = new Intent(mContext, mActivityArray[position]);
+//                startActivity(intent);
+                try{
+                    if (mModuleEntrance != null && mModuleEntrance[position] != null) {
+                        Intent intent = new Intent(mContext, Class.forName(mModuleEntrance[position]));
+                        startActivity(intent);
+                    }
+                }catch (Exception e){
+
+                }
+
+
             }
         });
     }

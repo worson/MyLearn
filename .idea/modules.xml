@@ -6,6 +6,8 @@
       <module fileurl="file://$PROJECT_DIR$/androidview/androidview.iml" filepath="$PROJECT_DIR$/androidview/androidview.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/designmode/designmode.iml" filepath="$PROJECT_DIR$/designmode/designmode.iml" />
+      <module fileurl="file://$PROJECT_DIR$/internetlib/internetlib.iml" filepath="$PROJECT_DIR$/internetlib/internetlib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sharelibrary/sharelibrary.iml" filepath="$PROJECT_DIR$/sharelibrary/sharelibrary.iml" />
     </modules>
   </component>
 </project>

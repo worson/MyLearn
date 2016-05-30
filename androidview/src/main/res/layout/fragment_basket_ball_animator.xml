@@ -1,0 +1,46 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/id_container"
+
+    >
+
+    <ImageView
+        android:id="@+id/basket_ball_imageview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/basketball" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/verticalRun_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="垂直" />
+
+        <Button
+            android:id="@+id/paowuxian_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="抛物线" />
+        <Button
+            android:id="@+id/simple_together_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="缩放" />
+
+        <Button
+            android:id="@+id/order_together_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="次序执行" />
+
+    </LinearLayout>
+
+</RelativeLayout>
