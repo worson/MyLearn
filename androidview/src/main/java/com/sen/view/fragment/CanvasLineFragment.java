@@ -2,6 +2,7 @@ package com.sen.view.fragment;
 
 
 import android.annotation.TargetApi;
+import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -13,7 +14,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +23,7 @@ import android.widget.ImageView;
 
 import com.sen.view.R;
 import com.sen.view.mappath.PathRectManager;
+import com.sen.view.mappath.PointUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -133,17 +134,6 @@ public class CanvasLineFragment extends Fragment {
         }
 
 
-    }
-    private  Bitmap drawPathText(Bitmap bitmap){
-
-        Canvas canvas = new Canvas(bitmap);
-        Paint textPaint = new TextPaint();
-        textPaint.setStrokeWidth(10);
-        textPaint.setTextSize(20);
-        textPaint.setColor(Color.WHITE);
-        canvas.drawText("师哥",0,500,textPaint);
-        HaloLogger.logI(TAG,"bitmap的宽高"+bitmap.getWidth()+" "+bitmap.getHeight());
-        return bitmap;
     }
 
     private List<Point> mPathPoints = new ArrayList<Point>();
@@ -268,11 +258,10 @@ public class CanvasLineFragment extends Fragment {
         markPaint.setStrokeWidth(3);
         markPaint.setStyle(Paint.Style.FILL);
 
-
-        mPathRectManager.drawUndrawRegion(canvas,textPaint);
         List<PathRectManager.RectRequest> rectRequests = new ArrayList<>();
-
-        mPathRectManager.drawUndrawRegion(canvas,textPaint);
+        if (PATH_DEBUG_MODE){
+            mPathRectManager.drawUndrawRegion(canvas,textPaint);
+        }
         //最长的路优先显示，优先取路的中间坐标点，多条路名左右交叉
         final int Cnt = Math.min(loads.size(),points.size());
         for (int i = 0; i < Cnt; i++) {
@@ -319,171 +308,6 @@ public class CanvasLineFragment extends Fragment {
 
 //            PathRectManager.drawRectText(content,textRect,textPaint);
         }
-    }
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    private  Bitmap drawPathText(List<Point> points, List<String> loads, int counter, Bitmap bitmap){
-        final boolean DEBUG_DRAW = false;
-        final int TEXT_MARGIN_WIDTH = 15;
-        final int TEXT_MARGIN_HEIGHT = 15;
-        int moveH =0,moveV=0,baseX=0,baseY=0;
-        Canvas canvas = new Canvas(bitmap);
-        Paint textPaint = new TextPaint();
-        List<Path> drawPathList = new LinkedList<>();
-        textPaint.setStrokeWidth(10);
-        textPaint.setTextSize(24);
-        textPaint.setColor(Color.WHITE);
-        Point centerPoint = new Point(bitmap.getWidth()/2,bitmap.getHeight()/2);
-        Paint.FontMetrics fm = textPaint.getFontMetrics();
-        int textHeight = (int) (Math.ceil(fm.descent - fm.ascent));
-        Path intersectPath = new Path();
-
-        Paint markPaint = new Paint();
-        markPaint.setColor(Color.RED);
-        markPaint.setStrokeWidth(3);
-        markPaint.setStyle(Paint.Style.FILL);
-
-
-        //计算不能标注的位置
-        int height = bitmap.getHeight();
-        int width = bitmap.getWidth();
-        Path path1 = new Path();
-        path1.addRect(0,0,width,height, Path.Direction.CCW);
-        Path windowPath = new Path();
-        windowPath.addRect(-10,-10,width+10,height+10, Path.Direction.CCW);
-        windowPath.op(path1, Path.Op.DIFFERENCE);
-        windowPath.addRect(width-200,height-70,width,height, Path.Direction.CCW);
-        drawPathList.add(windowPath);
-
-        //最长的路优先显示，优先取路的中间坐标点，多条路名左右交叉
-        final int Cnt = Math.min(counter,points.size());
-        for (int i = 0; i < Cnt; i++) {
-            Point point = points.get(i);
-            canvas.drawCircle(point.x,point.y,2,markPaint);
-            String content = loads.get(i);
-            if (content != null) {
-                if(content.length()>6){
-                    content = content.substring(0,5)+"...";
-                }
-                float tw = textPaint.measureText(content);
-                float th = Math.abs(textPaint.descent() + textPaint.ascent());
-                int pathtop = 0;
-                HaloLogger.logI(TAG,"正在绘制文本："+i+" "+content+"..."+"长度为："+content.length()+" 长："+(int)tw+" 高:"+textHeight);
-                for (int strategy = 0; strategy < 3; strategy++) {
-                    //计算当前点与路径的大概关系
-                    switch (strategy){
-                        case 0://向右下生长
-                            moveH = TEXT_MARGIN_WIDTH;
-                            moveV = textHeight+TEXT_MARGIN_HEIGHT;
-                            pathtop = point.y+TEXT_MARGIN_HEIGHT;
-                            break;
-                        case 1://向左下生长
-                            moveH = -((int)textHeight+TEXT_MARGIN_WIDTH);
-                            moveV = textHeight+TEXT_MARGIN_HEIGHT;
-                            pathtop = point.y+TEXT_MARGIN_HEIGHT;
-                            break;
-                        case 2://右上生长
-                            moveH = TEXT_MARGIN_WIDTH;
-                            moveV = -(TEXT_MARGIN_HEIGHT);
-                            pathtop = point.y-TEXT_MARGIN_HEIGHT-textHeight;
-                            break;
-                        default:
-                            break;
-                    }
-                    //右上生成
-                    baseX = point.x+moveH;
-                    baseY = point.y+moveV;
-                    //右上生长
-                    Path currentPath = getTextPath(baseX,pathtop,baseX+(int)tw,pathtop+textHeight);
-//                    Path currentPath = getTextPath(new Point(baseX,baseY),(int)tw,textHeight-moveH);
-//                    Path currentPath = getRectPath(new Point(baseX,pathtop),(int)tw,-textHeight);
-                    boolean calculateOk = false;
-                    for (int pathIndext = 0; pathIndext < drawPathList.size(); pathIndext++){
-                        Path path = drawPathList.get(pathIndext);
-                        if (intersectPath.op(currentPath,path,Path.Op.INTERSECT)){//计算成功
-                            if(intersectPath.isEmpty()) {//未相交  path.op(currentPath,Path.Op.INTERSECT)
-                                if(pathIndext == (drawPathList.size()-1)){
-                                    calculateOk = true;
-                                }
-                            }else {
-                                HaloLogger.logI(TAG,"绘制文本："+content+"与PATH相交");
-                                calculateOk = false;
-                                break;
-                            }
-
-                        }else{
-                            HaloLogger.logI(TAG,"相交计算不成功");
-                        }
-                    }
-                    if(drawPathList.size()<=0){
-                        calculateOk = true;
-                    }
-                    if (calculateOk){//测量成功
-                        HaloLogger.logI(TAG,"完成绘制文本："+i+" "+content);
-                        canvas.drawText(content,baseX,baseY,textPaint);
-                        drawPathList.add(currentPath);
-
-//                        canvas.drawTextOnPath(content,currentPath,0,0,textPaint);
-                        canvas.drawCircle(point.x,point.y,2,markPaint);
-                        if (DEBUG_DRAW){
-
-                            Paint paint = new Paint();
-                            paint.setStrokeWidth(2);
-                            paint.setStyle(Paint.Style.STROKE);
-                            paint.setColor(Color.RED);
-                            canvas.drawPath(currentPath,paint);
-
-                            Path line = new Path();
-                            line.moveTo(point.x,point.y);
-                            line.lineTo(point.x+tw,point.y);
-                            canvas.drawPath(line,paint);
-                        }
-                        break;
-                    }
-                }
-
-            }
-
-        }
-        return bitmap;
-    }
-
-    //右上生成
-    private Path getTextPath(float left, float top, float right, float bottom){
-
-        Path path = new Path();
-        //float left, float top, float right, float bottom, Direction dir
-        path.addRect(left,top,right,bottom, Path.Direction.CCW);
-        return path;
-    }
-
-    //右上生成
-    private Path getTextPath(Point refPoint,int width,int height){
-
-        Path path = new Path();
-        //float left, float top, float right, float bottom, Direction dir
-        path.addRect(refPoint.x,refPoint.y,refPoint.x+width,refPoint.y-height, Path.Direction.CCW);
-        return path;
-    }
-
-    // TODO: 16/5/23 未实现
-    private Path getRectPath(Point refPoint,int width,int height){
-        List<Point> points = new ArrayList<>();
-        points.add(new Point(refPoint.x,refPoint.y));
-        points.add(new Point(refPoint.x+width,refPoint.y));
-        points.add(new Point(refPoint.x+width,refPoint.y+height));
-        points.add(new Point(refPoint.x,refPoint.y+height));
-//        points.add(new Point(refPoint.x,refPoint.y));
-        Path path = new Path();
-
-        Point moveTo = points.get(0);
-        path.moveTo(moveTo.x,moveTo.y);
-        for (int i = 1; i <points.size() ; i=i+1) {
-            Point toPoint = points.get(i);
-            path.lineTo(toPoint.x,toPoint.y);
-        }
-        path.close();
-//        HaloLogger.logI(TAG,"getRectPath ：path is "+path);
-        return path;
     }
 
     private Bitmap drawPath(List<Point> points,Bitmap bitmap){
@@ -541,7 +365,11 @@ public class CanvasLineFragment extends Fragment {
         Bitmap endMark = BitmapFactory.decodeResource(getResources(), R.drawable.route_strategy_map_end);
         canvas.drawBitmap(endMark,endMarkPoint.x,endMarkPoint.y,paint);
 
+        List<Point> filterPoints = PointUtils.filterPoint(points,2);
+        Path filterPointsPath = PointUtils.points2ClosePath(filterPoints,5,5);
+
         mPathRectManager.clearUndrawRegion();
+        mPathRectManager.addUndrawRegion(filterPointsPath);
         mPathRectManager.addUndrawRegion(bitmap.getWidth(),bitmap.getHeight());
         mPathRectManager.addUndrawRegion(startMarkPoint,startMark.getWidth(),startMark.getHeight());
         mPathRectManager.addUndrawRegion(endMarkPoint,endMark.getWidth(),endMark.getHeight());

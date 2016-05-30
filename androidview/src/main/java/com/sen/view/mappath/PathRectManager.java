@@ -13,6 +13,7 @@ import android.os.Build;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 import hud.haliai.com.share.utils.HaloLogger;
@@ -31,8 +32,11 @@ public class PathRectManager {
     private List<Path> mBasicUndrawRegions;
     private List<RectResponse> mRectResponseList;
     private List<Point> mRectPoint; //矩形左上点的集合
+    private List<Point> mPathPoints; //路径的点集合
     private List<RectLayoutStatus> mRectLayoutStatusList;
     private Rect mPointsRegion;
+
+    private Path mRoutePath;
     private class RectLayoutStatus{
         private boolean done = false;
         private RectOrientation orientation;
@@ -66,6 +70,7 @@ public class PathRectManager {
         mRectPoint = new ArrayList<>();
         mRectLayoutStatusList = new ArrayList<>();
         mBasicUndrawRegions = new ArrayList<>();
+        mPathPoints = new LinkedList<>();
     }
 
     public enum RectType{
@@ -180,7 +185,7 @@ public class PathRectManager {
 
         for (RectRequest request:rectRequests){
             Point point = request.getPoint();
-            mRectPoint.add(point);
+            mRectPoint.add(new Point(point));
         }
         HaloLogger.logI(TAG,"所有点为："+mRectPoint);
         mUndrawRegions.addAll(mBasicUndrawRegions);
@@ -304,6 +309,7 @@ public class PathRectManager {
 
     /**
      *
+     *  得到的矩形会与路相交
      *  步骤：
      *  1、获取地图的方向
      *  2、前当前方向内取出可取的矩形
@@ -311,7 +317,6 @@ public class PathRectManager {
      *  4、以伸展方向取出剩下矩形
      *
      */
-
 
     public void layoutAllRect(final List<RectRequest> rectRequests){
         mRectLayoutStatusList.clear();
@@ -329,6 +334,41 @@ public class PathRectManager {
         }
 
     }
+    /****
+     *  得到所有的矩形，矩形不与path路径相交
+     *   *  步骤：
+     *  1、获取地图的方向
+     *  2、以地图当前的方向内取出可取的矩形
+     *      计算相邻两个点构成的最大矩形
+     *      移动textRect，当 与path相交时，根据相交的方向，交替 完成layout计算
+     *  3、以获取地图的方向的相反方向取出可取矩形，进行位置规划
+     *
+     *  4、以地图当前的方向，在整个方向内，取出中中心点最近的可取的矩形
+     *
+     *  5、3、以获取地图的方向的相反方向，在整个方向内，取出中中心点最近的可取的矩形
+     *
+     */
+    public void layoutAllRectAwayPath(final List<RectRequest> rectRequests){
+        mRectLayoutStatusList.clear();
+        for (RectRequest request:rectRequests){
+            mRectLayoutStatusList.add(new RectLayoutStatus());
+
+        }
+        Rect pointsRect =  measurePoints(mRectPoint);
+        if(pointsRect.height()>pointsRect.width()){
+            layoutRect(rectRequests,true,false);
+            layoutRect(rectRequests,false,false);
+        }else {
+            layoutRect(rectRequests,false,false);
+            layoutRect(rectRequests,true,false);
+        }
+
+    }
+
+    /****
+     * 以某种方式，查找一次矩形
+     *
+     */
     private  void layoutRect(final List<RectRequest> rectRequests, final boolean isVertival,final boolean isMove){
         List<CheckRectRequest> checkRectRequestList = new ArrayList<>();
         List<Point> mLayoutRectPoint = new ArrayList<>();
@@ -637,10 +677,27 @@ public class PathRectManager {
     public void clearUndrawRegion(){
         mBasicUndrawRegions.clear();
     }
+
+    /**
+     * 加入路径的Path 点
+     * **/
+    public List<Path> setFilterPathPoints(List<Point> points){
+        mPathPoints.clear();
+        mPathPoints.addAll(points);
+        mRoutePath = PointUtils.points2ClosePath(points, 1, 1);
+        return mBasicUndrawRegions;
+    }
+
+    /**
+     * 加入不能画文本的path
+     * **/
     public List<Path> addUndrawRegion(Path path){
         mBasicUndrawRegions.add(path);
         return mBasicUndrawRegions;
     }
+    /**
+     * 加入不能画文本的矩形
+     * **/
     public List<Path> addUndrawRegion(Point refPoint, int width, int heigth){
         Path path = new Path();
         path.addRect(new RectF(refPoint.x,refPoint.y,refPoint.x+width,refPoint.y+heigth), Path.Direction.CCW);
