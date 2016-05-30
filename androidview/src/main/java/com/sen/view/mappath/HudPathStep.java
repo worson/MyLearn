@@ -9,12 +9,19 @@ import java.util.List;
  * Created by wangshengxing on 16/5/24.
  */
 public class HudPathStep {
-    public class RoadStatus{
+    public static class RoadStatus{
         private int distance;
         private String status;
 
+        public RoadStatus() {
+        }
+
         public int getDistance() {
             return distance;
+        }
+
+        public void setDistance(String distance) {
+            this.distance = Integer.parseInt(distance);
         }
 
         public void setDistance(int distance) {
@@ -27,6 +34,11 @@ public class HudPathStep {
 
         public void setStatus(String status) {
             this.status = status;
+        }
+
+        @Override
+        public String toString() {
+            return distance+","+status;
         }
     }
     private List<Point> points;
@@ -71,5 +83,15 @@ public class HudPathStep {
         this.roadStatuses = roadStatuses;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (roadStatuses != null) {
+            stringBuilder.append(roadStatuses.toString());
+        }
+
+        return stringBuilder.toString();
+
+    }
 }
 

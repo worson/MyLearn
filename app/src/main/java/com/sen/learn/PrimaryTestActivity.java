@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.sen.internetlib.fragment.TestOkhttpFragment;
+import com.sen.learn.fragment.AmapWebRoadConditionFragment;
 import com.sen.learn.fragment.CardLayoutFragment;
 import com.sen.view.fragment.CanvasFragment;
 import com.sen.view.fragment.CanvasLineFragment;
@@ -34,7 +35,7 @@ public class PrimaryTestActivity extends AppCompatActivity {
         Fragment fragment = manager.findFragmentById(R.id.fragment_container);
 
         if (fragment == null) {
-            fragment = new TestOkhttpFragment();
+            fragment = new AmapWebRoadConditionFragment();
             manager.beginTransaction()
                     .add(R.id.fragment_container, fragment)
                     .commit();
