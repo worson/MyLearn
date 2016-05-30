@@ -45,6 +45,8 @@ public class PathPointsFragment extends Fragment {
     private ImageView mStrategyRouteView;
     private Bitmap mStrategyRouteViewBitmap;
 
+    private Canvas mCanvas;
+
 
     public PathPointsFragment() {
         // Required empty public constructor
@@ -145,16 +147,19 @@ public class PathPointsFragment extends Fragment {
         path1.addRect(width - 200, height - 70, width, height, Path.Direction.CCW);
         if (newPointList != null) {
             if (mStrategyRouteViewBitmap == null) {
+                mRegionRect = new Rect(0,0,width,height);
                 mStrategyRouteViewBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                mCanvas = new Canvas(mStrategyRouteViewBitmap);
+                mPathRectManager.setCanvas(mCanvas);
             }
 
-            drawPath(newPointList, mStrategyRouteViewBitmap);
+            drawPath(mCanvas,newPointList, mStrategyRouteViewBitmap);
 //            drawPathText(rectRemap(textPoints,mRectMapPara),loadNames,3,bitmap);
             List<Point> newTextPoint = RectUtils.rectRemap(textPoints, mRectMapPara);
-            drawPathText(newTextPoint, loadNames, mStrategyRouteViewBitmap);
+            drawPathText(mCanvas,newTextPoint, loadNames, mStrategyRouteViewBitmap);
             Rect windowRect = RectUtils.points2Rect(newPointList);
             RectUtils.marginRect(windowRect,new Rect(1,1,1,1));
-            drawDebug(windowRect,mStrategyRouteViewBitmap);
+            drawDebug(mCanvas,windowRect,mStrategyRouteViewBitmap);
             mStrategyRouteView.setImageBitmap(mStrategyRouteViewBitmap);
 
 
@@ -166,14 +171,14 @@ public class PathPointsFragment extends Fragment {
     private List<Point> mPathPoints = new ArrayList<Point>();
     private List<Point> textPoints = new ArrayList<Point>();
     private List<String> loadNames = new ArrayList<>();
-
+    private Rect mRegionRect;
     private Paint mPathPaint = new Paint(Color.YELLOW);
 
     PathRectManager mPathRectManager = new PathRectManager();
 
 
-    private void drawDebug(Rect rect, Bitmap bitmap){
-        Canvas canvas = new Canvas(bitmap);
+    private void drawDebug(Canvas canvas,Rect rect, Bitmap bitmap){
+//        Canvas canvas = new Canvas(bitmap);
         Paint testPaint = null;
         Path testPath = null;
         testPath = new Path();
@@ -199,10 +204,15 @@ public class PathPointsFragment extends Fragment {
         PathUtils.addPoints(testPath,filterPoints);
         canvas.drawPath(testPath,testPaint);
 
+        Rect nearMaxRect = RectUtils.getNearMaxRect(textPoints, textPoints.get(1), mRegionRect, Orientation.Basic.Vertical);
+        Path regionPath = new Path();
+        PathUtils.addRect(regionPath, nearMaxRect);
+        mCanvas.drawPath(regionPath, testPaint);
+
 
     }
-    private void drawPathText(List<Point> points, List<String> loads, Bitmap bitmap) {
-        Canvas canvas = new Canvas(bitmap);
+    private void drawPathText(Canvas canvas,List<Point> points, List<String> loads, Bitmap bitmap) {
+//        Canvas canvas = new Canvas(bitmap);
         Paint textPaint = new TextPaint();
         List<Path> drawPathList = new LinkedList<>();
         textPaint.setStrokeWidth(10);
@@ -250,6 +260,7 @@ public class PathPointsFragment extends Fragment {
             }
 
         }
+        mPathRectManager.setAwayPath(true);
         List<PathRectManager.RectResponse> textRectResponses = mPathRectManager.findRect(rectRequests);
         Path textPath = new Path();
         for (int i = 0; i < textRectResponses.size(); i++) {
@@ -281,8 +292,8 @@ public class PathPointsFragment extends Fragment {
 
     }
 
-    private Bitmap drawPath(List<Point> points, Bitmap bitmap) {
-        Canvas canvas = new Canvas(bitmap);
+    private Bitmap drawPath(Canvas canvas,List<Point> points, Bitmap bitmap) {
+//        Canvas canvas = new Canvas(bitmap);
 
         Paint pathPaint = new Paint();
         pathPaint.setColor(Color.BLUE);
@@ -340,8 +351,8 @@ public class PathPointsFragment extends Fragment {
         Path filterPointsPath = PointUtils.points2ClosePath(filterPoints, 1, 1);
 
         mPathRectManager.clearUndrawRegion();
+        mPathRectManager.setRegion(bitmap.getWidth(), bitmap.getHeight());
         mPathRectManager.addUndrawRegion(filterPointsPath);
-        mPathRectManager.addUndrawRegion(bitmap.getWidth(), bitmap.getHeight());
         mPathRectManager.addUndrawRegion(startMarkPoint, startMark.getWidth(), startMark.getHeight());
         mPathRectManager.addUndrawRegion(endMarkPoint, endMark.getWidth(), endMark.getHeight());
 

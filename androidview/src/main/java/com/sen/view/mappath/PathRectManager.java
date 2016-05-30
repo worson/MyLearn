@@ -2,6 +2,7 @@ package com.sen.view.mappath;
 
 import android.annotation.TargetApi;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
@@ -28,6 +29,10 @@ public class PathRectManager {
 
     private static final boolean POINTS_REGION_UNDRAW = true;
 
+    private boolean mTextAwayPath = false;
+    private Canvas mCanvas;
+    private Paint mOutlinePaint;
+
     private List<Path> mUndrawRegions;
     private List<Path> mBasicUndrawRegions;
     private List<RectResponse> mRectResponseList;
@@ -35,6 +40,7 @@ public class PathRectManager {
     private List<Point> mPathPoints; //路径的点集合
     private List<RectLayoutStatus> mRectLayoutStatusList;
     private Rect mPointsRegion;
+    private Rect mRegionRect; //总区域的大小
 
     private Path mRoutePath;
     private class RectLayoutStatus{
@@ -71,8 +77,20 @@ public class PathRectManager {
         mRectLayoutStatusList = new ArrayList<>();
         mBasicUndrawRegions = new ArrayList<>();
         mPathPoints = new LinkedList<>();
+
+        mTextAwayPath = false;
+
+        defaultInit();
     }
 
+    private void defaultInit(){
+        mOutlinePaint = new Paint();
+        Paint testPaint = mOutlinePaint;
+        testPaint = new Paint();
+        testPaint.setStrokeWidth(1);
+        testPaint.setColor(Color.RED);
+        testPaint.setStyle(Paint.Style.STROKE);
+    }
     public enum RectType{
         TextRect,
     }
@@ -100,6 +118,10 @@ public class PathRectManager {
             this.margin = margin;
             this.unDrawPoints = unDrawPoints;
         }
+    }
+
+    public void setCanvas(Canvas canvas) {
+        this.mCanvas = canvas;
     }
 
     private class CheckRectResponse{
@@ -168,8 +190,9 @@ public class PathRectManager {
             this.minRect = minRect;
         }
     }
-
-
+    public void setAwayPath(boolean isAway){
+        this.mTextAwayPath = isAway;
+    }
     /**
      *  在区域中找出想着的矩形区域
      *  步骤：
@@ -189,7 +212,11 @@ public class PathRectManager {
         }
         HaloLogger.logI(TAG,"所有点为："+mRectPoint);
         mUndrawRegions.addAll(mBasicUndrawRegions);
-        layoutAllRect(rectRequests);
+        if (mTextAwayPath){
+            layoutAllRectAwayPath(rectRequests);
+        }else {
+            layoutAllRect(rectRequests);
+        }
 //        mPointsRegion = measurePoints(mRectPoint);
         for (int i = 0; i < 0; i++) {//rectRequests.size()
             Path intersectPath = new Path();
@@ -345,7 +372,7 @@ public class PathRectManager {
      *
      *  4、以地图当前的方向，在整个方向内，取出中中心点最近的可取的矩形
      *
-     *  5、3、以获取地图的方向的相反方向，在整个方向内，取出中中心点最近的可取的矩形
+     *  5、以获取地图的方向的相反方向，在整个方向内，取出中中心点最近的可取的矩形
      *
      */
     public void layoutAllRectAwayPath(final List<RectRequest> rectRequests){
@@ -355,15 +382,84 @@ public class PathRectManager {
 
         }
         Rect pointsRect =  measurePoints(mRectPoint);
-        if(pointsRect.height()>pointsRect.width()){
-            layoutRect(rectRequests,true,false);
-            layoutRect(rectRequests,false,false);
-        }else {
-            layoutRect(rectRequests,false,false);
-            layoutRect(rectRequests,true,false);
+        final boolean isVertical = pointsRect.height()>pointsRect.width();
+        int range = 0;
+        for (int i = 0; i < 10; i++) {
+            layoutRectAwayPath(rectRequests,isVertical,range);
+            layoutRectAwayPath(rectRequests,!isVertical,range);
+            range += 20;
         }
 
     }
+    /****
+     * 以某种方式，查找一次矩形
+     *
+     */
+    private  void layoutRectAwayPath(final List<RectRequest> rectRequests, final boolean isVertival,final int range){
+        List<CheckRectRequest> checkRectRequestList = new ArrayList<>();
+        List<Point> mLayoutRectPoint = new ArrayList<>();
+        final int cnt = mRectPoint.size();
+        List<Point> unDrawPoints = new ArrayList<>();
+
+        for (int i = 0; i < cnt; i++) {
+            Point point = mRectPoint.get(i); //按距离处理
+            boolean isOk = mRectLayoutStatusList.get(i).done;//是否已经分配矩形
+            int index = findListEquals(mLayoutRectPoint, point);
+            if (!isOk) {
+                unDrawPoints.clear();
+                for (int k = 0; k <mRectPoint.size() ; k++) {
+                    if (k != i){
+                        Point udrawPoint = mRectPoint.get(k);
+                        unDrawPoints.add(udrawPoint);
+                    }
+                }
+//                Rect nearMaxRect = RectUtils.getNearMaxRect(mRectPoint, point, mRegionRect, Orientation.Basic.Vertical);
+//                Rect textRegion = new Rect();
+//                Path regionPath = new Path();
+//                PathUtils.addRect(regionPath,mRegionRect);
+//                mCanvas.drawPath(regionPath,mOutlinePaint);
+
+                HaloLogger.logI(TAG, "不允许画矩形的点："+unDrawPoints);
+//                unDrawPoints.clear();
+//                unDrawPoints.add(new Point(0,0));
+                RectRequest request = rectRequests.get(i);
+                //分配矩形策略
+                checkRectRequestList.clear();
+                Rect rectSize = new Rect(0,0,request.minRect.width()+request.marginHorizontal,
+                        request.minRect.height()+request.marginVertical);
+                if (isVertival){
+                    HaloLogger.logI(TAG, "纵向获取矩形");
+//                    checkRectRequestList.add(new CheckRectRequest(request.point, rectSize, RectOrientation.CENTER,range,4,unDrawPoints));
+                    checkRectRequestList.add(new CheckRectRequest(request.point, rectSize, RectOrientation.LETT,range,4,unDrawPoints));
+                    checkRectRequestList.add(new CheckRectRequest(request.point, rectSize, RectOrientation.RIGHT,range,4,unDrawPoints));
+                }else{
+                    HaloLogger.logI(TAG, "横向获取矩形");
+                    checkRectRequestList.add(new CheckRectRequest(request.point, rectSize, RectOrientation.UP,range,4,unDrawPoints));
+                    checkRectRequestList.add(new CheckRectRequest(request.point, rectSize, RectOrientation.BOTTOM,range,4,unDrawPoints));
+//                    checkRectRequestList.add(new CheckRectRequest(request.point, rectSize, RectOrientation.CENTER,range,4,unDrawPoints));
+                }
+                CheckRectResponse checkRectResponse = checkRectByStrategys(checkRectRequestList);
+                if (checkRectResponse != null) {
+                    RectResponse rectResponse = new RectResponse();
+                    rectResponse.rect = checkRectResponse.rect;
+                    rectResponse.index = i;
+                    mRectLayoutStatusList.get(i).done = (checkRectResponse.rect != null); //确认已经layout完成
+                    mRectLayoutStatusList.get(i).orientation = checkRectResponse.orientation;
+                    mRectResponseList.add(rectResponse);
+
+//                    mRectResponseList.add(rect);//记录矩形
+                    HaloLogger.logI(TAG, "成功获取矩形："+checkRectResponse.rect+",第"+i+",中心点" + point+" 策略为："+checkRectResponse.orientation);
+//                        mRectPoint.remove(point);//下次则不用计算该点
+                }
+            }
+            //不管是否已经分配区域，都放弃
+            if (index >= 0 && index < mLayoutRectPoint.size()) {
+                mLayoutRectPoint.remove(index);
+            }
+        }
+
+    }
+
 
     /****
      * 以某种方式，查找一次矩形
@@ -445,7 +541,9 @@ public class PathRectManager {
         }
 
     }
-
+    /**
+     *
+     * **/
     private CheckRectResponse checkRectByStrategys(List<CheckRectRequest> checkRectRequests){
         Rect rect = null;
         CheckRectResponse checkRectResponse = null;
@@ -557,6 +655,21 @@ public class PathRectManager {
         return result;
     }
 
+    /**
+     * 以方向和父矩形来获取可用矩形
+     * **/
+    public Rect getVerticalCheckRect(Rect region,Rect rectSize,int step,int start){
+        Rect rect =null;
+        int cnt = rectSize.height()/step;
+        for (int i = 0; i <cnt ; i++) {
+
+        }
+
+        return rect;
+    }
+    /**
+     * 以方向和偏移值来获取可用矩形
+     * **/
     public Rect getCheckRect(Point refPoint, Rect rectSize, RectOrientation orientation, int range,int margin,List<Point> unDrawPoints){
         final int stepPixel = 2;
         final int cnt = (range==0)?1:range/stepPixel;
@@ -661,6 +774,18 @@ public class PathRectManager {
     public static Rect measurePoints(List<Point> points){
         return measurePoints(points,0,points.size());
     }
+
+    /**
+     * 设置路径和文本的规划区域
+     * **/
+
+    public void setRegion(int width, int height){
+        mRegionRect = new Rect(0,0,width,height);
+        addUndrawRegion(width,height);
+    }
+    /**
+     * 以矩形外为path
+     * **/
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public List<Path> addUndrawRegion(int width, int height){
