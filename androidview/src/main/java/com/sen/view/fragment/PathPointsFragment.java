@@ -77,6 +77,8 @@ public class PathPointsFragment extends Fragment {
         pointList.clear();
         textPoints.clear();
         loadNames.clear();
+        int witdh = 200,var=0;
+        double sinLength;
         switch (strategy) {
             case 0:
                 mPathPoints.add(new Point(0, 0));
@@ -93,25 +95,26 @@ public class PathPointsFragment extends Fragment {
                 textPoints.add(new Point(30, 100));
                 break;
             case 1:
-                mPathPoints.add(new Point(0, 0));
-                mPathPoints.add(new Point(50, 0));
-                mPathPoints.add(new Point(50, 50));
-                mPathPoints.add(new Point(0, 50));
-                mPathPoints.add(new Point(0, 100));
-                mPathPoints.add(new Point(0, 150));
-                mPathPoints.add(new Point(50, 150));
-                mPathPoints.add(new Point(100, 200));
+                sinLength = witdh/((4*3.14));
+                var = 0;
+                for (int i = 0; i <witdh ; i++) {
+                    var = i;
+                    mPathPoints.add(new Point(var, (int)(50* Math.sin(var/sinLength))));
+                }
 
-                textPoints.add(new Point(20, 100));
-                textPoints.add(new Point(25, 100));
-                textPoints.add(new Point(35, 100));
-                textPoints.add(new Point(40, 100));
-                textPoints.add(new Point(40, 50));
+                var = 25;
+                textPoints.add(new Point(var, (int)(50* Math.sin(var/sinLength))));
+                var = 27;
+                textPoints.add(new Point(var, (int)(50* Math.sin(var/sinLength))));
+                var = 35;
+                textPoints.add(new Point(var, (int)(50* Math.sin(var/sinLength))));
+                var = 40;
+                textPoints.add(new Point(var, (int)(50* Math.sin(var/sinLength))));
                 break;
             case 2:
-                int witdh = 200;
-                double sinLength = witdh/((4*3.14));
-                int var = 0;
+
+                sinLength = witdh/((4*3.14));
+                var = 0;
                 for (int i = 0; i <witdh ; i++) {
                     var = i;
                     mPathPoints.add(new Point(var, (int)(50* Math.sin(var/sinLength))));
@@ -134,10 +137,11 @@ public class PathPointsFragment extends Fragment {
     }
 
     private void updatePath() {
-        initPath(2, mPathPoints);
+        initPath(1, mPathPoints);
         int height = mStrategyRouteView.getHeight();
         int width = mStrategyRouteView.getWidth();
-        Rect margin = new Rect(0,0,20,20);
+//        Rect margin = new Rect(20,20,90,20);
+        Rect margin = new Rect(0,0,0,0);
         RectUtils.RectMapPara mRectMapPara = RectUtils.measureRect(width, height, mPathPoints,margin);
         List<Point> newPointList = RectUtils.rectRemap(mPathPoints, mRectMapPara);
 
@@ -188,6 +192,10 @@ public class PathPointsFragment extends Fragment {
         testPaint.setStyle(Paint.Style.STROKE);
         List<Point> srcPoints = new ArrayList<>();
 
+        testPath.reset();
+        PathUtils.addRect(testPath,rect);
+        canvas.drawPath(testPath,testPaint);
+
         for (int i = 0; i <20 ; i++) {
             srcPoints.add(new Point(i*i,i*i));
         }
@@ -204,10 +212,10 @@ public class PathPointsFragment extends Fragment {
         PathUtils.addPoints(testPath,filterPoints);
         canvas.drawPath(testPath,testPaint);
 
-        Rect nearMaxRect = RectUtils.getNearMaxRect(textPoints, textPoints.get(1), mRegionRect, Orientation.Basic.Vertical);
-        Path regionPath = new Path();
-        PathUtils.addRect(regionPath, nearMaxRect);
-        mCanvas.drawPath(regionPath, testPaint);
+//        Rect nearMaxRect = RectUtils.getNearMaxRect(textPoints, textPoints.get(1), mRegionRect, Orientation.Basic.Vertical);
+//        Path regionPath = new Path();
+//        PathUtils.addRect(regionPath, nearMaxRect);
+//        mCanvas.drawPath(regionPath, testPaint);
 
 
     }
@@ -255,8 +263,9 @@ public class PathPointsFragment extends Fragment {
                 rectRequest.setPoint(point);
                 rectRequest.setMinRect(PathRectManager.getTextRect(content, textPaint));
                 rectRequests.add(rectRequest);
-
-                canvas.drawCircle(point.x, point.y, 2, markPaint);
+                if (PATH_DEBUG_MODE){
+                    canvas.drawCircle(point.x,point.y,2,markPaint);
+                }
             }
 
         }
@@ -285,9 +294,9 @@ public class PathPointsFragment extends Fragment {
 //            PathRectManager.drawRectText(content,textRect,textPaint);
         }
 
-        Rect maxRect = RectUtils.getNearMaxRect(points, points.get(1), new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()), Orientation.Basic.Horizontal);
-        testPath.reset();
-        testPath.addRect(new RectF(maxRect), Path.Direction.CCW);
+//        Rect maxRect = RectUtils.getNearMaxRect(points, points.get(1), new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()), Orientation.Basic.Horizontal);
+//        testPath.reset();
+//        testPath.addRect(new RectF(maxRect), Path.Direction.CCW);
 //        canvas.drawPath(testPath, testPaint);
 
     }

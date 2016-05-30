@@ -1,8 +1,8 @@
 package com.sen.internetlib.fragment;
 
 
+import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +23,8 @@ import hud.haliai.com.share.utils.HaloLogger;
  */
 public class TestOkhttpFragment extends Fragment {
 
-    private static final String TAG = "wangshengxing";
+    private static final String TAG = TestOkhttpFragment.class.getSimpleName();
+    private static final String WSX = "wangshengxing";
 
     public TestOkhttpFragment() {
         // Required empty public constructor
@@ -43,7 +44,7 @@ public class TestOkhttpFragment extends Fragment {
         OkHttpClient mOkHttpClient = new OkHttpClient();
         //创建一个Request
         final Request request = new Request.Builder()
-                .url("https://github.com/hongyangAndroid")
+                .url("http://restapi.amap.com/v3/direction/driving?origin=116.481028,39.989643&destination=116.465302,40.004717&extensions=all&output=json&key=0640c12d64d3dd14c90ac5f4d9dfefa1")
                 .build();
         //new call
         Call call = mOkHttpClient.newCall(request);
@@ -51,12 +52,13 @@ public class TestOkhttpFragment extends Fragment {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                HaloLogger.logI(TAG,"okhttp 获取数据失败");
+                HaloLogger.logI(WSX,"okhttp 获取数据失败");
             }
             @Override
             public void onResponse(final Response response) throws IOException {
-                HaloLogger.logI(TAG,"okhttp 收到数据");
-                //String htmlStr =  response.body().string();
+                String htmlStr =  response.body().string();
+                HaloLogger.logI(WSX,"okhttp 收到数据"+htmlStr);
+
             }
         });
     }

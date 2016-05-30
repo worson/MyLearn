@@ -64,7 +64,7 @@ public class RectUtils {
         if(widthScalefactor==0 ||widthScalefactor==0){
             return null;
         }
-        //缩放比例要大的一个，说明缩放还几乎满屏，另一个则要居中处理
+        //缩放比例要大的一个，说明缩放还几乎满屏，另一个则要居中处理,且此时margin可不生效
         if(widthScalefactor>heightScalefactor){
             scalefactor = widthScalefactor;
             widthMove = 0;
@@ -75,7 +75,7 @@ public class RectUtils {
             heightMove = 0;
         }
         widthMove = widthMove+margin.left;
-        heightMove = heightMove+margin.right;
+        heightMove = heightMove+margin.top;
         RectMapPara rectMapPara = new RectMapPara();
         rectMapPara.refPoint=refPoint;
         rectMapPara.scalefactor=scalefactor;
@@ -111,10 +111,11 @@ public class RectUtils {
         for (Point point: points) {
             maxLeft = Math.min(point.x,maxLeft);
             maxRight = Math.max(point.x,maxRight);
-            maxBottom = Math.max(point.y,maxTop);
-            maxTop = Math.min(point.y,maxBottom);
+            maxBottom = Math.max(point.y,maxBottom);
+            maxTop = Math.min(point.y,maxTop);
         }
         result = new Rect(maxLeft,maxTop,maxRight,maxBottom);
+        HaloLogger.logI(WSX,"points2Rect ,得到的矩形为"+result);
         return result;
     }
     /**

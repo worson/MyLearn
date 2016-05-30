@@ -34,7 +34,7 @@ public class PrimaryTestActivity extends AppCompatActivity {
         Fragment fragment = manager.findFragmentById(R.id.fragment_container);
 
         if (fragment == null) {
-            fragment = new PathPointsFragment();
+            fragment = new TestOkhttpFragment();
             manager.beginTransaction()
                     .add(R.id.fragment_container, fragment)
                     .commit();
