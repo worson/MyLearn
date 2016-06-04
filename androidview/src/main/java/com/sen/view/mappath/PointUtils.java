@@ -17,7 +17,7 @@ public class PointUtils {
      * 找到在矩形中的点
      */
 
-    public static List<Point> insideRect(Rect rect,List<Point> points){
+    public static List<Point> insideRect(Rect rect, List<Point> points){
 
         if (points == null || points.size()<=0) {
             return null;
@@ -104,6 +104,23 @@ public class PointUtils {
         return pointsPath;
     }
 
+
+    /**
+     * 得到点之间的path
+     */
+    public static void points2MovePath(Path pointsPath,List<Point> points, float moveH, float moveV){
+        if (points == null || points.size()<=0) {
+            return;
+        }
+        Point moveTo = points.get(0);
+        pointsPath.moveTo(moveTo.x+moveH,moveTo.y+moveV);
+        for (int j = 1; j <points.size() ; j=j+1) {
+            Point toPoint = points.get(j);
+            pointsPath.lineTo(toPoint.x+moveH,toPoint.y+moveV);
+        }
+    }
+
+
     /**
      * 得到点之间的闭区间的path
      */
@@ -119,4 +136,30 @@ public class PointUtils {
         return closePath;
     }
 
+    /**
+     * 得到两点之间的角度 0-360
+     */
+    public static double degree(Point p1,Point p2){
+        double angle = 0;
+        int diffX,diffY;
+        diffX = p2.x - p1.x;
+        diffY = p2.y - p1.y;
+        if (diffX==0){
+            if (diffY>0){
+                return 90;
+            }else {
+                return -90;
+            }
+        }else if(diffY==0){
+            if (diffX>0){
+                return 0;
+            }else {
+                return 180;
+            }
+        }else {
+            float k = Math.abs(diffY/diffX);   //斜率
+            angle  = Math.atan(k); //注意这个角度的范围是0 ----------pi/2, 不是0到90°
+        }
+        return  Math.toDegrees(angle);
+    }
 }

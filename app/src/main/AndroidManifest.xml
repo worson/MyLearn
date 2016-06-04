@@ -3,6 +3,8 @@
     package="com.sen.learn">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,7 +18,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PrimaryTestActivity"></activity>
+        <activity android:name=".PrimaryTestActivity"
+            android:screenOrientation="reverseLandscape">
+
+        </activity>
     </application>
 
 </manifest>

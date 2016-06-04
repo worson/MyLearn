@@ -1,15 +1,23 @@
 package com.sen.view.fragment;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ComposePathEffect;
+import android.graphics.CornerPathEffect;
+import android.graphics.DiscretePathEffect;
+import android.graphics.LinearGradient;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Shader;
 import android.os.Bundle;
 import android.text.TextPaint;
 import android.view.LayoutInflater;
@@ -17,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.sen.view.R;
 import com.sen.view.mappath.Orientation;
@@ -47,6 +56,8 @@ public class PathPointsFragment extends Fragment {
 
     private Canvas mCanvas;
 
+    private Context mContext;
+
 
     public PathPointsFragment() {
         // Required empty public constructor
@@ -55,6 +66,8 @@ public class PathPointsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mContext = getActivity();
+
         // Inflate the layout for this fragment
         mMainView = (ViewGroup) inflater.inflate(R.layout.fragment_path_points, container, false);
         mStrategyRouteView = (ImageView) mMainView
@@ -63,7 +76,9 @@ public class PathPointsFragment extends Fragment {
         mRedrawButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                defaultInit();
                 updatePath();
+//                updateDraw();
             }
         });
         //updatePath();
@@ -72,6 +87,16 @@ public class PathPointsFragment extends Fragment {
 
     Bitmap mStrategyRouteBitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
 
+    private void defaultInit(){
+        int height = mStrategyRouteView.getHeight();
+        int width = mStrategyRouteView.getWidth();
+        if (mStrategyRouteViewBitmap == null) {
+            mRegionRect = new Rect(0,0,width,height);
+            mStrategyRouteViewBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            mCanvas = new Canvas(mStrategyRouteViewBitmap);
+            mPathRectManager.setCanvas(mCanvas);
+        }
+    }
 
     private void initPath(int strategy, List<Point> pointList) {
         pointList.clear();
@@ -136,12 +161,25 @@ public class PathPointsFragment extends Fragment {
 
     }
 
+    private void updateDraw(){
+        int height = mStrategyRouteView.getHeight();
+        int width = mStrategyRouteView.getWidth();
+        if (mStrategyRouteViewBitmap == null) {
+            mRegionRect = new Rect(0,0,width,height);
+            mStrategyRouteViewBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            mCanvas = new Canvas(mStrategyRouteViewBitmap);
+            mPathRectManager.setCanvas(mCanvas);
+        }
+
+        drawLinearGradient(mCanvas,mStrategyRouteViewBitmap);
+        mStrategyRouteView.setImageBitmap(mStrategyRouteViewBitmap);
+    }
     private void updatePath() {
         initPath(1, mPathPoints);
         int height = mStrategyRouteView.getHeight();
         int width = mStrategyRouteView.getWidth();
 //        Rect margin = new Rect(20,20,90,20);
-        Rect margin = new Rect(0,0,0,0);
+        Rect margin = new Rect(20,30,30,30);
         RectUtils.RectMapPara mRectMapPara = RectUtils.measureRect(width, height, mPathPoints,margin);
         List<Point> newPointList = RectUtils.rectRemap(mPathPoints, mRectMapPara);
 
@@ -187,8 +225,9 @@ public class PathPointsFragment extends Fragment {
         Path testPath = null;
         testPath = new Path();
         testPaint = new Paint();
-        testPaint.setStrokeWidth(1);
+        testPaint.setStrokeWidth(2);
         testPaint.setColor(Color.RED);
+        testPaint.setTextSize(20);
         testPaint.setStyle(Paint.Style.STROKE);
         List<Point> srcPoints = new ArrayList<>();
 
@@ -211,6 +250,45 @@ public class PathPointsFragment extends Fragment {
         testPath.reset();
         PathUtils.addPoints(testPath,filterPoints);
         canvas.drawPath(testPath,testPaint);
+
+        Point refPoint = new Point(500,250);
+        canvas.drawCircle(refPoint.x,refPoint.y,4,testPaint);
+        Rect srcRect = new Rect(refPoint.x,refPoint.y,refPoint.x+60,refPoint.y+20);
+
+        RectUtils.moveRect(srcRect,100,100);
+        testPath.reset();
+        PathUtils.addRect(testPath,srcRect);
+//        canvas.drawPath(testPath,testPaint);
+
+        Point desPoint = new Point(refPoint.x+100,refPoint.y+100);
+
+
+        for (int i = 0; i < 6 ; i++) {
+//            RectF rotateRect = RectUtils.rotateRect(i*60,refPoint,new RectF(srcRect));
+            Rect rotateRect = RectUtils.rotateHorizontalRect(i*60,refPoint,srcRect);
+            testPath.reset();
+            PathUtils.addRect(testPath,rotateRect);
+            canvas.drawPath(testPath,testPaint);
+            HaloLogger.logI(WSX,"旋转度数为："+i*50);
+            testPath.reset();
+            testPath.moveTo(rotateRect.left,rotateRect.bottom);
+            testPath.lineTo(rotateRect.right,rotateRect.bottom);
+            canvas.drawTextOnPath(""+i,testPath,0,0,testPaint);
+
+//            Point point = RectUtils.rotatePoint(i*60,refPoint,desPoint);
+//            canvas.drawCircle(point.x,point.y,10,testPaint);
+//            canvas.drawText(""+i,point.x,point.y,testPaint);
+
+//            Matrix matrix = new Matrix();
+//            matrix.postRotate((i+1)*60,refPoint.x,refPoint.y);
+//            float[] xy = new float[2];
+//            matrix.mapPoints(xy,new float[]{550,250});
+//            canvas.drawCircle(xy[0],xy[1],10,testPaint);
+//            canvas.drawRect(xy[0]-50,xy[1]-50,xy[0]+50,xy[1]+50,testPaint);
+
+        }
+
+
 
 //        Rect nearMaxRect = RectUtils.getNearMaxRect(textPoints, textPoints.get(1), mRegionRect, Orientation.Basic.Vertical);
 //        Path regionPath = new Path();
@@ -301,6 +379,23 @@ public class PathPointsFragment extends Fragment {
 
     }
 
+    private Bitmap drawLinearGradient(Canvas canvas,Bitmap bitmap) {
+//        Canvas canvas = new Canvas(bitmap);
+
+        Paint pathPaint = new Paint();
+        pathPaint.setColor(Color.BLUE);
+        pathPaint.setStrokeWidth(5);
+//        pathPaint.setStyle(Paint.Style.STROKE);
+        pathPaint.setAntiAlias(true);
+        CornerPathEffect cornerPathEffect = new CornerPathEffect(80);
+        pathPaint.setPathEffect(cornerPathEffect);
+        //            pathPaint.setShadowLayer(0.2f,0,0,Color.rgb(0x00,0x7a,0xff));
+        LinearGradient linearGradient = new LinearGradient( 0, 0, 50, 0,new int[]{ Color.rgb(0x00, 0x7a, 0xff),Color.rgb(0x00, 0xe7, 0xff)}, new float[]{0f, 0.3f}, Shader.TileMode.REPEAT);
+//        LinearGradient linearGradient = new LinearGradient(0,0,400,400,Color.rgb(0x00,0x7a,0xff),Color.rgb(0x00,0x7a,0xff),Shader.TileMode.REPEAT);
+        pathPaint.setShader(linearGradient);
+        canvas.drawRect(0,0,bitmap.getWidth(),bitmap.getHeight(),pathPaint);
+        return bitmap;
+    }
     private Bitmap drawPath(Canvas canvas,List<Point> points, Bitmap bitmap) {
 //        Canvas canvas = new Canvas(bitmap);
 
@@ -308,6 +403,23 @@ public class PathPointsFragment extends Fragment {
         pathPaint.setColor(Color.BLUE);
         pathPaint.setStrokeWidth(5);
         pathPaint.setStyle(Paint.Style.STROKE);
+        pathPaint.setAntiAlias(true);
+        CornerPathEffect cornerPathEffect = new CornerPathEffect(80);
+        pathPaint.setPathEffect(cornerPathEffect);
+        Resources resources = mContext.getResources();
+        int colorStart = resources.getColor(R.color.strategy_path_start);
+        int colorEnd = resources.getColor(R.color.strategy_path_end);
+        int colorshadow = resources.getColor(R.color.color_strategy_path_shadow);
+
+//        pathPaint.setShadowLayer(0.2f,5,5,colorshadow);
+
+
+
+        LinearGradient linearGradient = new LinearGradient(0,0,500,500,new int[]{colorStart,colorEnd},new float[]{0f,0.3f},Shader.TileMode.REPEAT);
+//        LinearGradient linearGradient = new LinearGradient(0,0,400,400,Color.rgb(0x00,0x7a,0xff),Color.rgb(0x00,0x7a,0xff),Shader.TileMode.REPEAT);
+        pathPaint.setShader(linearGradient);
+
+//        canvas.drawRect(0,0,400,400,pathPaint);
 
         Paint paint = new Paint();
         canvas.drawColor(Color.BLACK);
@@ -321,6 +433,22 @@ public class PathPointsFragment extends Fragment {
 
         String[] LOADS = new String[]{"深南大道", "南海大道", "学府路", "滨海大道", "无名路", "107车道"};
         int[] COLORS = new int[]{Color.BLUE, Color.RED, Color.BLUE, Color.BLUE, Color.RED, Color.BLUE};
+
+
+        DiscretePathEffect discretePathEffect = new DiscretePathEffect(3.0f,2.0f);
+        ComposePathEffect composePathEffect = new ComposePathEffect(discretePathEffect,cornerPathEffect);
+        Paint shadowPaint = new Paint();
+        shadowPaint.setStrokeWidth(8);
+        shadowPaint.setStyle(Paint.Style.STROKE);
+        shadowPaint.setAntiAlias(true);
+        shadowPaint.setPathEffect(composePathEffect);
+        shadowPaint.setColor(colorshadow);
+        shadowPaint.setAlpha(45);
+
+        Path shadowPath = new Path();
+        PointUtils.points2MovePath(shadowPath,points,10,10);
+        canvas.drawPath(shadowPath, shadowPaint);
+
 
         int step = points.size() / 1;//points.size()/20
         int index = 0;
@@ -336,6 +464,7 @@ public class PathPointsFragment extends Fragment {
                 Point toPoint = points.get(index);
                 path.lineTo(toPoint.x, toPoint.y);
             }
+
             canvas.drawPath(path, pathPaint);
         }
 
@@ -351,20 +480,49 @@ public class PathPointsFragment extends Fragment {
 
         Point startMarkPoint = new Point(startPoint.x - 10, startPoint.y - 10);
         Point endMarkPoint = new Point(endPoint.x - 12, endPoint.y - 40);
+        float angle = (float) PointUtils.degree(new Point(0,0),new Point(1,1));
+        HaloLogger.logI(WSX,"发出的方向为: "+angle);
         Bitmap startMark = BitmapFactory.decodeResource(getResources(), R.drawable.route_strategy_map_start);
+        RectF srcRectF = new RectF(startPoint.x - 10, startPoint.y - 10,startPoint.x - 10+startMark.getWidth(), startPoint.y - 10+startMark.getHeight());
+        RectF rotateRectF = new RectF();
+        Matrix rotateMatrix = new Matrix();
+        rotateMatrix.postRotate(-45,startPoint.x,startPoint.y);
+        rotateMatrix.mapRect(rotateRectF,srcRectF);
+
+
+        rotateRectF = RectUtils.rotateRect(45,startPoint,srcRectF);
+        canvas.drawBitmap(startMark,rotateMatrix,paint);
+//        canvas.drawBitmap(startMark,null,rotateRectF,paint);
+
+//        canvas.drawRect(rotateRectF,textPaint);
+        canvas.rotate(angle,startPoint.x,startPoint.y);
+
         canvas.drawBitmap(startMark, startMarkPoint.x, startMarkPoint.y, paint);
+        canvas.rotate(-angle,startPoint.x,startPoint.y);
         Bitmap endMark = BitmapFactory.decodeResource(getResources(), R.drawable.route_strategy_map_end);
         canvas.drawBitmap(endMark, endMarkPoint.x, endMarkPoint.y, paint);
 
         List<Point> filterPoints = PointUtils.filterPoint(points, 2);
         Path filterPointsPath = PointUtils.points2ClosePath(filterPoints, 1, 1);
 
+        mCanvas.drawCircle(startPoint.x,startPoint.y,3,textPaint);
         mPathRectManager.clearUndrawRegion();
         mPathRectManager.setRegion(bitmap.getWidth(), bitmap.getHeight());
         mPathRectManager.addUndrawRegion(filterPointsPath);
         mPathRectManager.addUndrawRegion(startMarkPoint, startMark.getWidth(), startMark.getHeight());
         mPathRectManager.addUndrawRegion(endMarkPoint, endMark.getWidth(), endMark.getHeight());
 
+//        Point x1 = new Point(100,100);
+//        Point x2 = new Point(300,100);
+//        Point x3 = new Point(100,300);
+//        Point x4 = new Point(300,300);
+//        Matrix matrix = new Matrix();
+//        matrix.postRotate(90,0,0);
+//        float[] xy = new float[2];
+//        matrix.mapPoints(xy,new float[]{0,100});
+//        x1.x = (int) xy[0];
+//        x1.y = (int) xy[1];
+//        Toast.makeText(mContext," x1.x="+x1.x+",x1.y="+x1.y,Toast.LENGTH_LONG).show();
         return bitmap;
 
     }

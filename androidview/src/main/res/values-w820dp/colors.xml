@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="darkyellow"> #FFCC33</color>
+    <color name="strategy_path_start"> #00e7ff</color>
+    <color name="strategy_path_end"> #006cfe</color>
+    <color name="color_strategy_path_shadow"> #006cfe </color>
 </resources>

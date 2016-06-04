@@ -1,8 +1,10 @@
 package com.sen.view.mappath;
 
+import android.graphics.Matrix;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.RectF;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -322,6 +324,74 @@ public class RectUtils {
             rect.top += moveV;
             rect.bottom += moveV;
         }
+    }
+    /**
+     * 转换成Rect
+     * **/
+
+    public static Rect toRect( RectF rectF){
+        Rect result = new Rect();
+        result.left = (int)rectF.left;
+        result.top = (int)rectF.top;
+        result.right = (int)rectF.right;
+        result.bottom = (int)rectF.bottom;
+        return result;
+    }
+
+    /**
+     * 旋转一个点
+     * **/
+    public static Point rotatePoint(float degree,Point refPoint,Point point) {
+        Point rotatePoint = new Point();
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree,refPoint.x,refPoint.y);
+        float[] xy = new float[2];
+        matrix.mapPoints(xy,new float[]{point.x,point.y});
+        rotatePoint.x = (int) xy[0];
+        rotatePoint.y = (int) xy[1];
+        return rotatePoint;
+    }
+
+    /**
+     * 旋转一个点
+     * **/
+    public static Point rotatePoint(float degree,Point refPoint,float x,float y) {
+        Point rotatePoint = new Point();
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree,refPoint.x,refPoint.y);
+        float[] xy = new float[2];
+        matrix.mapPoints(xy,new float[]{x,y});
+        rotatePoint.x = (int) xy[0];
+        rotatePoint.y = (int) xy[1];
+        return rotatePoint;
+    }
+
+
+    /**
+     * 以某个对照点旋转一个矩形，
+     * **/
+    public static RectF rotateRect(float degree,Point refPoint,RectF rect) {
+        Point leftTopPoint = rotatePoint(degree,refPoint,rect.left,rect.top);
+        Point rightBottomPoint = rotatePoint(degree,refPoint,rect.right,rect.bottom);
+        RectF resultF = new RectF(leftTopPoint.x,leftTopPoint.y,rightBottomPoint.x,rightBottomPoint.y);
+        return resultF;
+    }
+    /**
+     * 以某个对照点旋转一个矩形，最后仍水平展现
+     * **/
+    public static Rect rotateHorizontalRect(float degree,Point refPoint,Rect rect) {
+        Point srcPoint = new Point();
+        srcPoint.x = rect.left;
+        srcPoint.y = rect.top;
+        Point rotatePoint = rotatePoint(degree,refPoint,srcPoint);
+        Rect result = null;
+        if (degree >= 90 && degree <= 270) {
+            result = new Rect(rotatePoint.x-rect.width(),rotatePoint.y,rotatePoint.x,rotatePoint.y+rect.height());
+        } else {
+            result = new Rect(rotatePoint.x,rotatePoint.y,rotatePoint.x+rect.width(),rotatePoint.y+rect.height());
+        }
+        return result;
+
     }
 
 }

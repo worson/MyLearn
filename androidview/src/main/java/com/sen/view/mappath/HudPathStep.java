@@ -48,7 +48,7 @@ public class HudPathStep {
 
     public HudPathStep() {
 //        points = new LinkedList<>();
-        roadStatuses = new ArrayList<>();
+//        roadStatuses = new ArrayList<>();
     }
 
     public List<Point> getPoints() {
@@ -86,10 +86,15 @@ public class HudPathStep {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("{ ");
         if (roadStatuses != null) {
+            stringBuilder.append("状态点："+roadStatuses.size());
             stringBuilder.append(roadStatuses.toString());
         }
-
+        if (points != null) {
+            stringBuilder.append("["+"经过点"+points.size()+"]");
+        }
+        stringBuilder.append("},");
         return stringBuilder.toString();
 
     }

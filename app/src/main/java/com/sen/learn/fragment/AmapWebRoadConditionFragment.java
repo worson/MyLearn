@@ -83,21 +83,23 @@ public class AmapWebRoadConditionFragment extends Fragment {
         mRoadConditionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateRoadCondition();
+                updateRoadCondition("116.481028,39.989643","116.465302,40.004717",2);
             }
         });
         //updatePath();
         return mMainView;
     }
 
-    public void updateRoadCondition() {
+    public void updateRoadCondition(String orgin,String destination,int strategy) {
         //创建okHttpClient对象
         OkHttpClient mOkHttpClient = new OkHttpClient();
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append("http://restapi.amap.com/v3/direction/driving?extensions=all&output=json&key=0640c12d64d3dd14c90ac5f4d9dfefa1");
+//        urlBuilder.append()
         //创建一个Request
         Request.Builder builder = new Request.Builder()
-                .url("http://restapi.amap.com/v3/direction/driving?origin=116.481028,39.989643&destination=116.465302,40.004717&extensions=all&output=json&key=0640c12d64d3dd14c90ac5f4d9dfefa1");
-//        builder.addHeader("origin","116.481028,39.98964");
-//        builder.addHeader("destination","116.465302,40.004717");
+                .url("http://restapi.amap.com/v3/direction/driving?extensions=all&output=json&key=0640c12d64d3dd14c90ac5f4d9dfefa1&origin="+orgin+"&destination="+destination+"&strategy="+strategy);
+        //http://restapi.amap.com/v3/direction/driving?extensions=all&output=json&key=0640c12d64d3dd14c90ac5f4d9dfefa1&origin=116.481028,39.989643&destination=116.465302,40.004717
         //new call
         final Request request = builder.build();
         Call call = mOkHttpClient.newCall(request);
@@ -109,48 +111,51 @@ public class AmapWebRoadConditionFragment extends Fragment {
             }
             @Override
             public void onResponse(final Response response) throws IOException {
-                String htmlStr =  response.body().string();
-                JSONObject joAll = JsonTool.parseToJSONObject(htmlStr);
-                JSONObject joRoute = JsonTool.getJSONObject(joAll,"route");
-
-                JSONArray jaPaths = JsonTool.getJsonArray(joRoute,"paths");
-                JSONObject joPath = JsonTool.getJSONObject(jaPaths,0);
-
-                JSONArray jaSteps = JsonTool.getJsonArray(joPath,"steps");
-                final  int cnt = jaSteps.length();
-
-                List<HudPathStep> pathStepList = new ArrayList<HudPathStep>(cnt);
-
-                for (int i = 0; i <cnt ; i++) {
-                    List<HudPathStep.RoadStatus> roadStatuseList = new LinkedList<>();
-
-                    JSONObject joStep = JsonTool.getJSONObject(jaSteps,i);
-                    JSONArray jaTmcs = JsonTool.getJsonArray(joStep,"tmcs");
-                    for (int j = 0; j < jaTmcs.length(); j++) {
-                        JSONObject joTmc = JsonTool.getJSONObject(jaTmcs,j);
-                        String distance  = JsonTool.getJsonValue(joTmc,"distance");
-                        String status  = JsonTool.getJsonValue(joTmc,"status");
-
-                        HudPathStep.RoadStatus roadStatus = new HudPathStep.RoadStatus();
-                        roadStatus.setDistance(distance);
-                        roadStatus.setStatus(status);
-                        roadStatuseList.add(roadStatus);
-                    }
-
-                    HudPathStep pathStep = new HudPathStep();
-                    pathStep.setRoadStatuses(roadStatuseList);
-                    pathStepList.add(pathStep);
-
-                }
-
-                String strategy = JsonTool.getJsonValue(joPath,"strategy");
-                HaloLogger.logI(WSX,"okhttp 收到数据"+",策略："+strategy+"，路况数据："+pathStepList);
-
+                String htmlStr = response.body().string();
+                List<HudPathStep> pathStepList = new ArrayList<HudPathStep>();
+                parseRouteCondition(pathStepList,htmlStr);
             }
         });
     }
 
-    Bitmap mStrategyRouteBitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
+    public void parseRouteCondition(List<HudPathStep> pathStepList, String jsonStr){
+        JSONObject joAll = JsonTool.parseToJSONObject(jsonStr);
+        JSONObject joRoute = JsonTool.getJSONObject(joAll,"route");
+
+        JSONArray jaPaths = JsonTool.getJsonArray(joRoute,"paths");
+        JSONObject joPath = JsonTool.getJSONObject(jaPaths,0);
+
+        JSONArray jaSteps = JsonTool.getJsonArray(joPath,"steps");
+        final  int cnt = jaSteps.length();
+
+        for (int i = 0; i <cnt ; i++) {
+            List<HudPathStep.RoadStatus> roadStatuseList = new LinkedList<>();
+
+            JSONObject joStep = JsonTool.getJSONObject(jaSteps,i);
+            JSONArray jaTmcs = JsonTool.getJsonArray(joStep,"tmcs");
+            for (int j = 0; j < jaTmcs.length(); j++) {
+                JSONObject joTmc = JsonTool.getJSONObject(jaTmcs,j);
+                String distance  = JsonTool.getJsonValue(joTmc,"distance");
+                String status  = JsonTool.getJsonValue(joTmc,"status");
+
+                HudPathStep.RoadStatus roadStatus = new HudPathStep.RoadStatus();
+                roadStatus.setDistance(distance);
+                roadStatus.setStatus(status);
+                roadStatuseList.add(roadStatus);
+            }
+
+            HudPathStep pathStep = new HudPathStep();
+            pathStep.setRoadStatuses(roadStatuseList);
+            pathStepList.add(pathStep);
+
+        }
+
+        String strategy = JsonTool.getJsonValue(joPath,"strategy");
+        HaloLogger.logI(TAG,"okhttp 收到数据"+",策略："+strategy+"DriveStep为："+cnt+"，路况数据："+pathStepList);
+
+    }
+
+
 
 
     private void initPath(int strategy, List<Point> pointList) {
@@ -257,7 +262,7 @@ public class AmapWebRoadConditionFragment extends Fragment {
     private List<String> loadNames = new ArrayList<>();
     private Rect mRegionRect;
     private Paint mPathPaint = new Paint(Color.YELLOW);
-
+    Bitmap mStrategyRouteBitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
     PathRectManager mPathRectManager = new PathRectManager();
 
 

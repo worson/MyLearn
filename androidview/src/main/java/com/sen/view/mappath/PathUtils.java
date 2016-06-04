@@ -18,7 +18,7 @@ public class PathUtils {
      * 加入点集合
      */
 
-    public static void  addPoints(Path path,List<Point> points){
+    public static void  addPoints(Path path, List<Point> points){
         if (points == null || points.size()<=0 || path == null) {
             return ;
         }
@@ -30,10 +30,19 @@ public class PathUtils {
     /***
      * 加入Rect
      */
-    public static void addRect(Path path,Rect rect) {
+    public static void addRect(Path path, Rect rect) {
         if (path != null || rect == null) {
             path.addRect((new RectF(rect)), Path.Direction.CCW);
         }
     }
+    /***
+     * 加入RectF
+     */
+    public static void addRect(Path path, RectF rect) {
+        if (path != null || rect == null) {
+            path.addRect((new RectF(rect)), Path.Direction.CCW);
+        }
+    }
+
 
 }
