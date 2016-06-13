@@ -1,1 +1,1 @@
-include ':app', ':androidview', ':designmode', ':sharelibrary', ':internetlib', ':thinkingjava', ':algorithm'
+include ':app', ':androidview', ':designmode', ':sharelibrary', ':internetlib', ':thinkingjava', ':algorithm', ':hudlib'

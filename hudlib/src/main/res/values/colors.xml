@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_speech_panel_title"> #FFFFFF</color>
+    <color name="color_speech_panel_subtitle"> #FFFFFF</color>
+
+</resources>

@@ -3,13 +3,13 @@
 
     <string-array name="main_activity_list_item_description">
         <item>当前测试</item>
-        <item>设计模式</item>
+        <item>Hud测试</item>
         <item>UI交互</item>
     </string-array>
 
     <string-array name="main_activity_list_item_entrance">
         <item>com.sen.learn.PrimaryTestActivity</item>
-        <item>com.sen.designmode.Collection.one.view.DisignModeMainActivity</item>
+        <item>com.sen.learn.activity.HudLaucherActivity</item>
         <item>com.sen.view.AndroidViewMainActivity</item>
     </string-array>
 

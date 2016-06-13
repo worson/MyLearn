@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="110dp"
+        android:layout_marginRight="26.6dp"
+        android:layout_marginTop="48.66dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="3"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/speech_panel_title_icon_size"
+                    android:layout_height="@dimen/speech_panel_title_icon_size"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/voice_menu_icon_navigation" />
+
+                <TextView
+                    android:id="@+id/voice_menu_icon_navigation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="fitXY"
+                    android:text="导航"
+                    android:textColor="@color/color_speech_panel_title"
+                    android:textSize="@dimen/speech_panel_title_size" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/prompt_navi_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14.66dp"
+                android:text="导航到深圳湾"
+                android:textColor="@color/color_speech_panel_subtitle"
+                android:textSize="@dimen/speech_panel_subtitle_size" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="3"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/speech_panel_title_icon_size"
+                    android:layout_height="@dimen/speech_panel_title_icon_size"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/voice_menu_icon_music" />
+
+                <TextView
+                    android:id="@+id/prompt_music_title_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="fitXY"
+                    android:text="音乐"
+                    android:textColor="@color/color_speech_panel_title"
+                    android:textSize="@dimen/speech_panel_title_size" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/prompt_music_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14.66dp"
+                android:text="播放音乐"
+                android:textColor="@color/color_speech_panel_subtitle"
+                android:textSize="@dimen/speech_panel_subtitle_size" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="3"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/speech_panel_title_icon_size"
+                    android:layout_height="@dimen/speech_panel_title_icon_size"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/voice_menu_icon_call" />
+
+                <TextView
+                    android:id="@+id/prompt_call_title_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="fitXY"
+                    android:text="打电话"
+                    android:textColor="@color/color_speech_panel_title"
+                    android:textSize="@dimen/speech_panel_title_size" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/prompt_call_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14.66dp"
+                android:text="打电话光晕"
+                android:textColor="@color/color_speech_panel_subtitle"
+                android:textSize="@dimen/speech_panel_subtitle_size" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="3"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/speech_panel_title_icon_size"
+                    android:layout_height="@dimen/speech_panel_title_icon_size"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/voice_menu_icon_camera" />
+
+                <TextView
+                    android:id="@+id/prompt_camera_title_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="fitXY"
+                    android:text="记录仪"
+                    android:textColor="@color/color_speech_panel_title"
+                    android:textSize="@dimen/speech_panel_title_size" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/prompt_camera_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14.66dp"
+                android:text="打开精彩视频"
+                android:textColor="@color/color_speech_panel_subtitle"
+                android:textSize="@dimen/speech_panel_subtitle_size" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

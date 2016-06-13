@@ -4,11 +4,14 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MyLearn.iml" filepath="$PROJECT_DIR$/MyLearn.iml" />
       <module fileurl="file://$PROJECT_DIR$/algorithm/algorithm.iml" filepath="$PROJECT_DIR$/algorithm/algorithm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/algorithm/algorithm.iml" filepath="$PROJECT_DIR$/algorithm/algorithm.iml" />
       <module fileurl="file://$PROJECT_DIR$/androidview/androidview.iml" filepath="$PROJECT_DIR$/androidview/androidview.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/designmode/designmode.iml" filepath="$PROJECT_DIR$/designmode/designmode.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hudlib/hudlib.iml" filepath="$PROJECT_DIR$/hudlib/hudlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/internetlib/internetlib.iml" filepath="$PROJECT_DIR$/internetlib/internetlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/sharelibrary/sharelibrary.iml" filepath="$PROJECT_DIR$/sharelibrary/sharelibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/thinkingjava/thinkingjava.iml" filepath="$PROJECT_DIR$/thinkingjava/thinkingjava.iml" />
       <module fileurl="file://$PROJECT_DIR$/thinkingjava/thinkingjava.iml" filepath="$PROJECT_DIR$/thinkingjava/thinkingjava.iml" />
     </modules>
   </component>

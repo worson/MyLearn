@@ -1,0 +1,19 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/speech_panel_viewgroup"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include
+        android:id="@+id/speech_main_panel_viewgroup"
+        layout="@layout/layout_speech_panel_main" >
+    </include>
+    <include
+        android:id="@+id/speech_main_navi_panel_viewgroup"
+        layout="@layout/layout_speech_panel_main_naving" >
+    </include>
+    <include
+        android:id="@+id/speech_common_panel_viewgroup"
+        layout="@layout/layout_speech_panel_common" >
+    </include>
+
+
+</RelativeLayout>
