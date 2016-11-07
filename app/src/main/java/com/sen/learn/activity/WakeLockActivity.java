@@ -1,40 +1,27 @@
-package com.sen.learn;
+package com.sen.learn.activity;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 
-import com.sen.internetlib.fragment.TestOkhttpFragment;
-import com.sen.learn.fragment.AmapWebRoadConditionFragment;
-import com.sen.learn.fragment.CardLayoutFragment;
-import com.sen.view.fragment.CanvasFragment;
-import com.sen.view.fragment.CanvasLineFragment;
-import com.sen.view.fragment.CanvasPathFragment;
-import com.sen.view.fragment.LayoutAnimationFragment;
-import com.sen.view.fragment.LinearGradientFragment;
-import com.sen.view.fragment.PathPointsFragment;
-import com.sen.view.fragment.RectBitmapFragment;
-import com.sen.view.surfaceview.TestSurfaceViewFragment;
+import com.sen.learn.R;
 
-import hud.haliai.com.hudlib.fragment.ARwayProgressLoadingFragment;
+import hud.haliai.com.hudlib.fragment.HudSpeechPanelFragment;
 
-
-public class PrimaryTestActivity extends AppCompatActivity {
+public class WakeLockActivity extends AppCompatActivity {
 
     PowerManager powerManager = null;
     PowerManager.WakeLock wakeLock = null;
-    Fragment mFragment = null;
 
     private View mMainView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getLayoutInflater();
-        setContentView(R.layout.activity_primary_test);
+        setContentView(R.layout.activity_wake_lock);
         mMainView = findViewById(R.id.fragment_container);
         startFragment();
         powerManager = (PowerManager)this.getSystemService(this.POWER_SERVICE);
@@ -58,16 +45,10 @@ public class PrimaryTestActivity extends AppCompatActivity {
         Fragment fragment = manager.findFragmentById(R.id.fragment_container);
 
         if (fragment == null) {
-            fragment = new ARwayProgressLoadingFragment();
+            fragment = new HudSpeechPanelFragment();
             manager.beginTransaction()
                     .add(R.id.fragment_container, fragment)
                     .commit();
         }
-        mFragment = fragment;
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        return ((ARwayProgressLoadingFragment)mFragment).onTouchEvent(event);
     }
 }

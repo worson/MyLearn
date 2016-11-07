@@ -1,5 +1,7 @@
 package com.sen.thinkingjava.io;
 
+import android.graphics.Bitmap;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
@@ -17,4 +19,5 @@ public class ByteBufferTest {
 //    LinkedList
 //    BufferedOutputStream
 //    OutputStream
+//    Bitmap
 }

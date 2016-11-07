@@ -18,9 +18,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".PrimaryTestActivity" />
         <activity
-            android:name=".PrimaryTestActivity"></activity>
-        <activity android:name=".activity.HudLaucherActivity"
+            android:name=".activity.HudLaucherActivity"
             android:screenOrientation="reverseLandscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,6 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.WakeLockActivity"></activity>
     </application>
 
 </manifest>

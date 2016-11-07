@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.sen.learn.R;
-import com.sen.view.fragment.LinearGradientFragment;
+
 
 import hud.haliai.com.hudlib.fragment.HudSpeechPanelFragment;
 
